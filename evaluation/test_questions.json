@@ -1,0 +1,14 @@
+[
+  {
+    "id": "q1",
+    "question": "What are the top 5 products by sales?"
+  },
+  {
+    "id": "q2",
+    "question": "Show monthly profit trend."
+  },
+  {
+    "id": "q3",
+    "question": "Which region has the highest average discount?"
+  }
+]
