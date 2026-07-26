@@ -32,6 +32,9 @@ if run:
         state = {
             "question": query,
             "dataframe": df,
+            "dataset_profile": {},
+            "intent": "",
+            "method": "",
             "analysis": "",
             "sql": "",
             "chart": None,
