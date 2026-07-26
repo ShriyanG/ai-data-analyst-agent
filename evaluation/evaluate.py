@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import json
 import statistics
-import time
 from pathlib import Path
 from typing import Any
 
@@ -75,15 +74,12 @@ def build_initial_state(question: str, df: pd.DataFrame) -> dict[str, Any]:
 def run_single_case(graph: Any, df: pd.DataFrame, case: dict[str, Any]) -> dict[str, Any]:
     """Execute one benchmark case and capture runtime metadata."""
     state = build_initial_state(case["question"], df)
-    start = time.perf_counter()
     result = graph.invoke(state)
-    elapsed_ms = (time.perf_counter() - start) * 1000.0
 
     return {
         "id": case.get("id", "unknown"),
         "question": case["question"],
         "result": result,
-        "latency_ms": elapsed_ms,
         "expected": case.get("expected", {}),
     }
 
@@ -173,7 +169,6 @@ def weighted_case_score(case_result: dict[str, Any], df: pd.DataFrame) -> dict[s
     return {
         "id": case_result["id"],
         "question": case_result["question"],
-        "latency_ms": case_result["latency_ms"],
         "correctness": correctness,
         "contract": contract,
         "guardrails": guardrails,
@@ -186,7 +181,6 @@ def weighted_case_score(case_result: dict[str, Any], df: pd.DataFrame) -> dict[s
 
 def summarize_scores(case_scores: list[dict[str, Any]]) -> dict[str, Any]:
     """Compute aggregate benchmark metrics."""
-    latencies = [c["latency_ms"] for c in case_scores]
     final_scores = [c["final_score"] for c in case_scores]
     pass_count = sum(1 for c in case_scores if c["passed"])
 
@@ -195,18 +189,7 @@ def summarize_scores(case_scores: list[dict[str, Any]]) -> dict[str, Any]:
         "pass_count": pass_count,
         "pass_rate": pass_count / len(case_scores) if case_scores else 0.0,
         "avg_score": statistics.mean(final_scores) if final_scores else 0.0,
-        "p50_latency_ms": statistics.median(latencies) if latencies else 0.0,
-        "p95_latency_ms": _percentile(latencies, 95.0),
     }
-
-
-def _percentile(values: list[float], pct: float) -> float:
-    """Return percentile for a list of numeric values."""
-    if not values:
-        return 0.0
-    sorted_vals = sorted(values)
-    idx = int(round((pct / 100.0) * (len(sorted_vals) - 1)))
-    return sorted_vals[idx]
 
 
 def write_results(payload: dict[str, Any], path: Path = DEFAULT_RESULTS_PATH) -> None:
@@ -240,7 +223,6 @@ def main() -> None:
     print(f"Evaluated {summary['total_cases']} cases")
     print(f"Pass rate: {summary['pass_rate']:.2%}")
     print(f"Average score: {summary['avg_score']:.3f}")
-    print(f"Latency p50/p95 (ms): {summary['p50_latency_ms']:.1f}/{summary['p95_latency_ms']:.1f}")
     print(f"Detailed report written to: {DEFAULT_RESULTS_PATH}")
 
 
