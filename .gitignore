@@ -35,3 +35,5 @@ outputs/
 *.parquet
 *.db
 *.duckdb
+
+evaluation/results.json

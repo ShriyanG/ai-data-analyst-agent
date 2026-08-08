@@ -4,8 +4,8 @@
     "pass_count": 7,
     "pass_rate": 0.7,
     "avg_score": 0.8799999999999999,
-    "latency_p50_ms": 1.7538534999999023,
-    "latency_p95_ms": 2.2162079999996642
+    "latency_p50_ms": 11.84518750000002,
+    "latency_p95_ms": 12.40141700000008
   },
   "cases": [
     {
@@ -15,7 +15,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 7.00554199999992,
+      "latency_ms": 16.872875000000008,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -56,8 +56,8 @@
         },
         "intent": "descriptive",
         "method": "duckdb",
-        "analysis": "Direct Answer: For 'What is total sales by region, sorted highest to lowest?', this Phase 1 scaffold classified the request as descriptive and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used duckdb path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
-        "sql": "SELECT * FROM data LIMIT 5;",
+        "analysis": "Direct Answer: Total sales by region was executed for 'What is total sales by region, sorted highest to lowest?'.\n\nEvidence:  region  total_sales\n   West      1459.99\n  South      1419.00\nCentral       499.99\n   East       394.50\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
+        "sql": "SELECT \"region\" AS region, SUM(\"sales\") AS total_sales FROM data GROUP BY 1 ORDER BY 2 DESC",
         "chart": null,
         "errors": []
       }
@@ -69,7 +69,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 1.7965410000000404,
+      "latency_ms": 12.305082999999994,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -110,7 +110,7 @@
         },
         "intent": "descriptive",
         "method": "duckdb",
-        "analysis": "Direct Answer: For 'Which 5 products generated the highest total profit?', this Phase 1 scaffold classified the request as descriptive and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used duckdb path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "analysis": "Direct Answer: A sample of the dataset was executed for 'Which 5 products generated the highest total profit?'.\n\nEvidence:     order_id order_date  region        category sub_category  sales  profit  discount  quantity\nCA-2026-0001 2026-01-05    West      Technology       Phones 899.99  210.35      0.10         3\nCA-2026-0002 2026-01-11    East       Furniture       Chairs 349.50   42.10      0.15         2\nCA-2026-0003 2026-01-20   South Office Supplies      Binders 120.00   18.40      0.05         5\nCA-2026-0004 2026-02-03 Central      Technology  Accessories  79.99    9.80      0.00         4\nCA-2026-0005 2026-02-18    West       Furniture       Tables 560.00  -32.00      0.25         1\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
         "sql": "SELECT * FROM data LIMIT 5;",
         "chart": null,
         "errors": []
@@ -123,7 +123,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 2.0133329999998395,
+      "latency_ms": 11.268333999999935,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -164,7 +164,7 @@
         },
         "intent": "descriptive",
         "method": "duckdb",
-        "analysis": "Direct Answer: For 'What is the average order value by customer segment?', this Phase 1 scaffold classified the request as descriptive and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used duckdb path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "analysis": "Direct Answer: A sample of the dataset was executed for 'What is the average order value by customer segment?'.\n\nEvidence:     order_id order_date  region        category sub_category  sales  profit  discount  quantity\nCA-2026-0001 2026-01-05    West      Technology       Phones 899.99  210.35      0.10         3\nCA-2026-0002 2026-01-11    East       Furniture       Chairs 349.50   42.10      0.15         2\nCA-2026-0003 2026-01-20   South Office Supplies      Binders 120.00   18.40      0.05         5\nCA-2026-0004 2026-02-03 Central      Technology  Accessories  79.99    9.80      0.00         4\nCA-2026-0005 2026-02-18    West       Furniture       Tables 560.00  -32.00      0.25         1\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
         "sql": "SELECT * FROM data LIMIT 5;",
         "chart": null,
         "errors": []
@@ -177,7 +177,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 1.7111659999997642,
+      "latency_ms": 12.259791999999937,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -218,8 +218,8 @@
         },
         "intent": "diagnostic",
         "method": "duckdb",
-        "analysis": "Direct Answer: For 'Month over month, which category contributed most to the overall sales decline in the worst month?', this Phase 1 scaffold classified the request as diagnostic and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used duckdb path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
-        "sql": "SELECT * FROM data LIMIT 5;",
+        "analysis": "Direct Answer: Monthly sales trend was executed for 'Month over month, which category contributed most to the overall sales decline in the worst month?'.\n\nEvidence:      month  total_sales\n2026-01-01      1369.49\n2026-02-01       639.99\n2026-03-01      1764.00\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
+        "sql": "SELECT DATE_TRUNC('month', CAST(\"order_date\" AS DATE)) AS month, SUM(\"sales\") AS total_sales FROM data GROUP BY 1 ORDER BY 1",
         "chart": null,
         "errors": []
       }
@@ -231,7 +231,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 1.6741670000000042,
+      "latency_ms": 11.544791000000053,
       "final_score": 0.75,
       "passed": false,
       "result": {
@@ -272,7 +272,7 @@
         },
         "intent": "descriptive",
         "method": "duckdb",
-        "analysis": "Direct Answer: For 'Which sub-categories have high sales but below-average profit margin?', this Phase 1 scaffold classified the request as descriptive and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used duckdb path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "analysis": "Direct Answer: A sample of the dataset was executed for 'Which sub-categories have high sales but below-average profit margin?'.\n\nEvidence:     order_id order_date  region        category sub_category  sales  profit  discount  quantity\nCA-2026-0001 2026-01-05    West      Technology       Phones 899.99  210.35      0.10         3\nCA-2026-0002 2026-01-11    East       Furniture       Chairs 349.50   42.10      0.15         2\nCA-2026-0003 2026-01-20   South Office Supplies      Binders 120.00   18.40      0.05         5\nCA-2026-0004 2026-02-03 Central      Technology  Accessories  79.99    9.80      0.00         4\nCA-2026-0005 2026-02-18    West       Furniture       Tables 560.00  -32.00      0.25         1\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
         "sql": "SELECT * FROM data LIMIT 5;",
         "chart": null,
         "errors": []
@@ -285,7 +285,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 1.6594169999999409,
+      "latency_ms": 12.145583999999987,
       "final_score": 0.75,
       "passed": false,
       "result": {
@@ -326,8 +326,8 @@
         },
         "intent": "descriptive",
         "method": "duckdb",
-        "analysis": "Direct Answer: For 'For orders with discounts above 20%, how does average profit compare with orders at 20% or below?', this Phase 1 scaffold classified the request as descriptive and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used duckdb path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
-        "sql": "SELECT * FROM data LIMIT 5;",
+        "analysis": "Direct Answer: Average profit by discount group was executed for 'For orders with discounts above 20%, how does average profit compare with orders at 20% or below?'.\n\nEvidence: discount_group  average_profit\n     Above 20%      -32.000000\n  20% or below       93.335714\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
+        "sql": "SELECT CASE WHEN \"discount\" > 0.2 THEN 'Above 20%' ELSE '20% or below' END AS discount_group, AVG(\"profit\") AS average_profit FROM data GROUP BY 1",
         "chart": null,
         "errors": []
       }
@@ -339,7 +339,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 1.7028749999998816,
+      "latency_ms": 12.40141700000008,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -380,9 +380,12 @@
         },
         "intent": "trend",
         "method": "pandas",
-        "analysis": "Direct Answer: For 'Plot monthly sales trend and identify the month with the highest growth rate.', this Phase 1 scaffold classified the request as trend and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used pandas path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "analysis": "Direct Answer: Trend analysis was computed from monthly aggregates.\n\nEvidence: order_date   sales\n2026-01-31 1369.49\n2026-02-28  639.99\n2026-03-31 1764.00\n\nMethod Note: Used pandas to aggregate the data over time.\n\nAssumptions/Interpretation: The trend is based on the latest available monthly totals.\n\nNumeric columns detected: sales, profit, discount, quantity.",
         "sql": "",
-        "chart": null,
+        "chart": {
+          "kind": "line",
+          "series": "sales"
+        },
         "errors": []
       }
     },
@@ -393,7 +396,7 @@
       "contract": 0.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 1.5404170000001827,
+      "latency_ms": 1.3617500000000504,
       "final_score": 0.30000000000000004,
       "passed": false,
       "result": {
@@ -449,7 +452,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 2.2162079999996642,
+      "latency_ms": 3.373916999999893,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -490,7 +493,7 @@
         },
         "intent": "outlier",
         "method": "pandas",
-        "analysis": "Direct Answer: For 'Which 10 orders are outliers for loss and what common attributes do they share?', this Phase 1 scaffold classified the request as outlier and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used pandas path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "analysis": "Direct Answer: Outlier candidates were identified from the lowest-profit rows.\n\nEvidence:  profit\n -32.00\n   9.80\n  12.20\n  18.40\n  42.10\n  55.50\n 210.35\n 305.00\n\nMethod Note: Used pandas to rank the rows by profit magnitude.\n\nAssumptions/Interpretation: These rows are treated as candidate outliers for the current question.\n\nNumeric columns detected: sales, profit, discount, quantity.",
         "sql": "",
         "chart": null,
         "errors": []
@@ -503,7 +506,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 1.8698329999997654,
+      "latency_ms": 2.711542000000011,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -544,7 +547,7 @@
         },
         "intent": "outlier",
         "method": "pandas",
-        "analysis": "Direct Answer: For 'Are there any states with unusually high shipping cost relative to sales?', this Phase 1 scaffold classified the request as outlier and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used pandas path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "analysis": "Direct Answer: Outlier candidates were identified from the lowest-profit rows.\n\nEvidence:  profit\n -32.00\n   9.80\n  12.20\n  18.40\n  42.10\n  55.50\n 210.35\n 305.00\n\nMethod Note: Used pandas to rank the rows by profit magnitude.\n\nAssumptions/Interpretation: These rows are treated as candidate outliers for the current question.\n\nNumeric columns detected: sales, profit, discount, quantity.",
         "sql": "",
         "chart": null,
         "errors": []

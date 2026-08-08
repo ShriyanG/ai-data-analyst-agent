@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from langgraph.graph import END, START, StateGraph
 
+from agent.execution import execute_analysis
 from agent.state import AgentState
-from agent.tools import summarize_dataframe
 from analytics.profiler import profile_dataframe
 from analytics.validators import validate_analysis_output
 
@@ -54,29 +54,8 @@ def _route_label(state: AgentState) -> str:
 
 
 def _execute_analysis(state: AgentState) -> AgentState:
-    """Run deterministic scaffold analysis for supported intents."""
-    df = state["dataframe"]
-    question = state["question"]
-
-    summary = summarize_dataframe(df)
-    profile = state.get("dataset_profile", profile_dataframe(df))
-    intent = state.get("intent", "descriptive")
-    method = state.get("method", "pandas")
-
-    numeric_cols = ", ".join(profile["numeric_columns"]) or "None"
-    state["analysis"] = (
-        f"Direct Answer: For '{question}', this Phase 1 scaffold classified the request as {intent} "
-        "and generated a deterministic analysis response.\n\n"
-        f"Evidence: Dataset has {summary['rows']} rows and {summary['columns']} columns. "
-        f"Numeric columns detected: {numeric_cols}.\n\n"
-        f"Method Note: Used {method} path with profile + summary helpers "
-        "as a deterministic placeholder for Phase 1 orchestration.\n\n"
-        "Assumptions/Interpretation: This scaffold does not yet compute question-specific metrics; "
-        "it reports validated dataset context and selected intent/method."
-    )
-    state["sql"] = "SELECT * FROM data LIMIT 5;" if method == "duckdb" else ""
-    state["chart"] = None
-    return state
+    """Run deterministic analysis for supported intents."""
+    return execute_analysis(state)
 
 
 def _validate_response(state: AgentState) -> AgentState:
