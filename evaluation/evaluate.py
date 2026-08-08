@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import statistics
+import time
 from pathlib import Path
 from typing import Any
 
@@ -74,14 +75,37 @@ def build_initial_state(question: str, df: pd.DataFrame) -> dict[str, Any]:
 def run_single_case(graph: Any, df: pd.DataFrame, case: dict[str, Any]) -> dict[str, Any]:
     """Execute one benchmark case and capture runtime metadata."""
     state = build_initial_state(case["question"], df)
+    start = time.perf_counter()
     result = graph.invoke(state)
+    latency_ms = (time.perf_counter() - start) * 1000.0
 
     return {
         "id": case.get("id", "unknown"),
         "question": case["question"],
         "result": result,
         "expected": case.get("expected", {}),
+        "latency_ms": latency_ms,
     }
+
+
+def _sanitize_result_for_report(result: dict[str, Any]) -> dict[str, Any]:
+    """Keep report payload JSON-serializable and compact."""
+    clean = dict(result)
+
+    # Dataframe is large and not JSON serializable; keep its shape only.
+    dataframe = clean.get("dataframe")
+    if isinstance(dataframe, pd.DataFrame):
+        clean["dataframe"] = {
+            "rows": int(dataframe.shape[0]),
+            "columns": int(dataframe.shape[1]),
+        }
+
+    # Matplotlib figures and other objects are not serializable.
+    chart = clean.get("chart")
+    if chart is not None and not isinstance(chart, (str, int, float, bool, list, dict)):
+        clean["chart"] = "<non-serializable-chart-object>"
+
+    return clean
 
 
 def score_correctness(case_result: dict[str, Any]) -> float:
@@ -122,12 +146,21 @@ def score_correctness(case_result: dict[str, Any]) -> float:
 def score_contract_compliance(case_result: dict[str, Any]) -> float:
     """Score whether response format matches required output contract.
 
-    Placeholder strategy:
-    - Check that analysis is non-empty.
-    - Expand later for direct answer/evidence/method/assumptions sections.
+    Current strategy:
+    - Check required response contract sections in analysis text.
     """
-    analysis = str(case_result["result"].get("analysis", "")).strip()
-    return 1.0 if analysis else 0.0
+    analysis = str(case_result["result"].get("analysis", ""))
+    required = [
+        "direct answer:",
+        "evidence:",
+        "method note:",
+        "assumptions/interpretation:",
+    ]
+    if not analysis.strip():
+        return 0.0
+
+    present = sum(1 for marker in required if marker in analysis.lower())
+    return present / len(required)
 
 
 def score_guardrails(case_result: dict[str, Any], df: pd.DataFrame) -> float:
@@ -149,7 +182,14 @@ def score_reliability(case_result: dict[str, Any]) -> float:
     """Score runtime reliability for a single case."""
     result = case_result["result"]
     has_analysis = bool(str(result.get("analysis", "")).strip())
-    return 1.0 if has_analysis else 0.0
+    has_runtime_error = False
+    for err in result.get("errors", []):
+        text = str(err).lower()
+        if "traceback" in text or "exception" in text:
+            has_runtime_error = True
+            break
+
+    return 1.0 if has_analysis and not has_runtime_error else 0.0
 
 
 def weighted_case_score(case_result: dict[str, Any], df: pd.DataFrame) -> dict[str, Any]:
@@ -173,9 +213,10 @@ def weighted_case_score(case_result: dict[str, Any], df: pd.DataFrame) -> dict[s
         "contract": contract,
         "guardrails": guardrails,
         "reliability": reliability,
+        "latency_ms": case_result.get("latency_ms"),
         "final_score": final_score,
         "passed": final_score >= 0.80,
-        "result": case_result["result"],
+        "result": _sanitize_result_for_report(case_result["result"]),
     }
 
 
@@ -183,12 +224,22 @@ def summarize_scores(case_scores: list[dict[str, Any]]) -> dict[str, Any]:
     """Compute aggregate benchmark metrics."""
     final_scores = [c["final_score"] for c in case_scores]
     pass_count = sum(1 for c in case_scores if c["passed"])
+    latencies = [c["latency_ms"] for c in case_scores if c.get("latency_ms") is not None]
+
+    p50 = statistics.median(latencies) if latencies else 0.0
+    p95 = 0.0
+    if latencies:
+        sorted_latencies = sorted(latencies)
+        idx = max(0, min(len(sorted_latencies) - 1, int(0.95 * len(sorted_latencies)) - 1))
+        p95 = sorted_latencies[idx]
 
     return {
         "total_cases": len(case_scores),
         "pass_count": pass_count,
         "pass_rate": pass_count / len(case_scores) if case_scores else 0.0,
         "avg_score": statistics.mean(final_scores) if final_scores else 0.0,
+        "latency_p50_ms": p50,
+        "latency_p95_ms": p95,
     }
 
 
@@ -223,6 +274,8 @@ def main() -> None:
     print(f"Evaluated {summary['total_cases']} cases")
     print(f"Pass rate: {summary['pass_rate']:.2%}")
     print(f"Average score: {summary['avg_score']:.3f}")
+    print(f"Latency p50: {summary['latency_p50_ms']:.1f} ms")
+    print(f"Latency p95: {summary['latency_p95_ms']:.1f} ms")
     print(f"Detailed report written to: {DEFAULT_RESULTS_PATH}")
 
 

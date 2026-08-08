@@ -21,7 +21,10 @@ def _plan_query(state: AgentState) -> AgentState:
     """Classify query intent using simple deterministic heuristics."""
     question = state["question"].lower()
 
-    if any(token in question for token in ["plot", "chart", "trend", "graph"]):
+    if any(token in question for token in ["forecast", "predict", "causal", "regression", "classify"]):
+        state["intent"] = "unsupported"
+        state["method"] = "none"
+    elif any(token in question for token in ["plot", "chart", "trend", "graph"]):
         state["intent"] = "trend"
         state["method"] = "pandas"
     elif any(token in question for token in ["top", "bottom", "highest", "lowest", "total", "average"]):
@@ -60,13 +63,16 @@ def _execute_analysis(state: AgentState) -> AgentState:
     intent = state.get("intent", "descriptive")
     method = state.get("method", "pandas")
 
+    numeric_cols = ", ".join(profile["numeric_columns"]) or "None"
     state["analysis"] = (
-        f"Question: {question}\n\n"
-        f"Intent: {intent}\n"
-        f"Method: {method}\n"
-        f"Rows: {summary['rows']}, Columns: {summary['columns']}\n"
-        f"Numeric columns: {', '.join(profile['numeric_columns']) or 'None'}\n"
-        "Phase 2 workflow is active. Replace this execution node with LLM + tool-calling logic."
+        f"Direct Answer: For '{question}', this Phase 1 scaffold classified the request as {intent} "
+        "and generated a deterministic analysis response.\n\n"
+        f"Evidence: Dataset has {summary['rows']} rows and {summary['columns']} columns. "
+        f"Numeric columns detected: {numeric_cols}.\n\n"
+        f"Method Note: Used {method} path with profile + summary helpers "
+        "as a deterministic placeholder for Phase 1 orchestration.\n\n"
+        "Assumptions/Interpretation: This scaffold does not yet compute question-specific metrics; "
+        "it reports validated dataset context and selected intent/method."
     )
     state["sql"] = "SELECT * FROM data LIMIT 5;" if method == "duckdb" else ""
     state["chart"] = None
@@ -83,13 +89,18 @@ def _validate_response(state: AgentState) -> AgentState:
 
 def _unsupported_fallback(state: AgentState) -> AgentState:
     """Generate actionable fallback for unsupported requests."""
+    reason = "Unsupported request class for v1."
+    if state.get("errors"):
+        reason = state["errors"][-1]
+
     state["analysis"] = (
         "This request is out of scope for v1. "
-        "Try descriptive, trend, diagnostic, or outlier questions on columns present in the CSV."
+        "Try descriptive, trend, diagnostic, or outlier questions on columns present in the CSV. "
+        "Example: 'What is total sales by region?'"
     )
     state["sql"] = ""
     state["chart"] = None
-    state.setdefault("errors", []).append("Unsupported request class for v1.")
+    state.setdefault("errors", []).append(reason)
     return state
 
 

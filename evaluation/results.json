@@ -1,0 +1,554 @@
+{
+  "summary": {
+    "total_cases": 10,
+    "pass_count": 7,
+    "pass_rate": 0.7,
+    "avg_score": 0.8799999999999999,
+    "latency_p50_ms": 1.7538534999999023,
+    "latency_p95_ms": 2.2162079999996642
+  },
+  "cases": [
+    {
+      "id": "q1",
+      "question": "What is total sales by region, sorted highest to lowest?",
+      "correctness": 1.0,
+      "contract": 1.0,
+      "guardrails": 1.0,
+      "reliability": 1.0,
+      "latency_ms": 7.00554199999992,
+      "final_score": 0.9999999999999999,
+      "passed": true,
+      "result": {
+        "question": "What is total sales by region, sorted highest to lowest?",
+        "dataframe": {
+          "rows": 8,
+          "columns": 9
+        },
+        "dataset_profile": {
+          "shape": [
+            8,
+            9
+          ],
+          "numeric_columns": [
+            "sales",
+            "profit",
+            "discount",
+            "quantity"
+          ],
+          "categorical_columns": [
+            "order_id",
+            "order_date",
+            "region",
+            "category",
+            "sub_category"
+          ],
+          "missing_values": {
+            "order_id": 0,
+            "order_date": 0,
+            "region": 0,
+            "category": 0,
+            "sub_category": 0,
+            "sales": 0,
+            "profit": 0,
+            "discount": 0,
+            "quantity": 0
+          }
+        },
+        "intent": "descriptive",
+        "method": "duckdb",
+        "analysis": "Direct Answer: For 'What is total sales by region, sorted highest to lowest?', this Phase 1 scaffold classified the request as descriptive and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used duckdb path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "sql": "SELECT * FROM data LIMIT 5;",
+        "chart": null,
+        "errors": []
+      }
+    },
+    {
+      "id": "q2",
+      "question": "Which 5 products generated the highest total profit?",
+      "correctness": 1.0,
+      "contract": 1.0,
+      "guardrails": 1.0,
+      "reliability": 1.0,
+      "latency_ms": 1.7965410000000404,
+      "final_score": 0.9999999999999999,
+      "passed": true,
+      "result": {
+        "question": "Which 5 products generated the highest total profit?",
+        "dataframe": {
+          "rows": 8,
+          "columns": 9
+        },
+        "dataset_profile": {
+          "shape": [
+            8,
+            9
+          ],
+          "numeric_columns": [
+            "sales",
+            "profit",
+            "discount",
+            "quantity"
+          ],
+          "categorical_columns": [
+            "order_id",
+            "order_date",
+            "region",
+            "category",
+            "sub_category"
+          ],
+          "missing_values": {
+            "order_id": 0,
+            "order_date": 0,
+            "region": 0,
+            "category": 0,
+            "sub_category": 0,
+            "sales": 0,
+            "profit": 0,
+            "discount": 0,
+            "quantity": 0
+          }
+        },
+        "intent": "descriptive",
+        "method": "duckdb",
+        "analysis": "Direct Answer: For 'Which 5 products generated the highest total profit?', this Phase 1 scaffold classified the request as descriptive and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used duckdb path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "sql": "SELECT * FROM data LIMIT 5;",
+        "chart": null,
+        "errors": []
+      }
+    },
+    {
+      "id": "q3",
+      "question": "What is the average order value by customer segment?",
+      "correctness": 1.0,
+      "contract": 1.0,
+      "guardrails": 1.0,
+      "reliability": 1.0,
+      "latency_ms": 2.0133329999998395,
+      "final_score": 0.9999999999999999,
+      "passed": true,
+      "result": {
+        "question": "What is the average order value by customer segment?",
+        "dataframe": {
+          "rows": 8,
+          "columns": 9
+        },
+        "dataset_profile": {
+          "shape": [
+            8,
+            9
+          ],
+          "numeric_columns": [
+            "sales",
+            "profit",
+            "discount",
+            "quantity"
+          ],
+          "categorical_columns": [
+            "order_id",
+            "order_date",
+            "region",
+            "category",
+            "sub_category"
+          ],
+          "missing_values": {
+            "order_id": 0,
+            "order_date": 0,
+            "region": 0,
+            "category": 0,
+            "sub_category": 0,
+            "sales": 0,
+            "profit": 0,
+            "discount": 0,
+            "quantity": 0
+          }
+        },
+        "intent": "descriptive",
+        "method": "duckdb",
+        "analysis": "Direct Answer: For 'What is the average order value by customer segment?', this Phase 1 scaffold classified the request as descriptive and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used duckdb path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "sql": "SELECT * FROM data LIMIT 5;",
+        "chart": null,
+        "errors": []
+      }
+    },
+    {
+      "id": "q4",
+      "question": "Month over month, which category contributed most to the overall sales decline in the worst month?",
+      "correctness": 1.0,
+      "contract": 1.0,
+      "guardrails": 1.0,
+      "reliability": 1.0,
+      "latency_ms": 1.7111659999997642,
+      "final_score": 0.9999999999999999,
+      "passed": true,
+      "result": {
+        "question": "Month over month, which category contributed most to the overall sales decline in the worst month?",
+        "dataframe": {
+          "rows": 8,
+          "columns": 9
+        },
+        "dataset_profile": {
+          "shape": [
+            8,
+            9
+          ],
+          "numeric_columns": [
+            "sales",
+            "profit",
+            "discount",
+            "quantity"
+          ],
+          "categorical_columns": [
+            "order_id",
+            "order_date",
+            "region",
+            "category",
+            "sub_category"
+          ],
+          "missing_values": {
+            "order_id": 0,
+            "order_date": 0,
+            "region": 0,
+            "category": 0,
+            "sub_category": 0,
+            "sales": 0,
+            "profit": 0,
+            "discount": 0,
+            "quantity": 0
+          }
+        },
+        "intent": "diagnostic",
+        "method": "duckdb",
+        "analysis": "Direct Answer: For 'Month over month, which category contributed most to the overall sales decline in the worst month?', this Phase 1 scaffold classified the request as diagnostic and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used duckdb path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "sql": "SELECT * FROM data LIMIT 5;",
+        "chart": null,
+        "errors": []
+      }
+    },
+    {
+      "id": "q5",
+      "question": "Which sub-categories have high sales but below-average profit margin?",
+      "correctness": 0.5,
+      "contract": 1.0,
+      "guardrails": 1.0,
+      "reliability": 1.0,
+      "latency_ms": 1.6741670000000042,
+      "final_score": 0.75,
+      "passed": false,
+      "result": {
+        "question": "Which sub-categories have high sales but below-average profit margin?",
+        "dataframe": {
+          "rows": 8,
+          "columns": 9
+        },
+        "dataset_profile": {
+          "shape": [
+            8,
+            9
+          ],
+          "numeric_columns": [
+            "sales",
+            "profit",
+            "discount",
+            "quantity"
+          ],
+          "categorical_columns": [
+            "order_id",
+            "order_date",
+            "region",
+            "category",
+            "sub_category"
+          ],
+          "missing_values": {
+            "order_id": 0,
+            "order_date": 0,
+            "region": 0,
+            "category": 0,
+            "sub_category": 0,
+            "sales": 0,
+            "profit": 0,
+            "discount": 0,
+            "quantity": 0
+          }
+        },
+        "intent": "descriptive",
+        "method": "duckdb",
+        "analysis": "Direct Answer: For 'Which sub-categories have high sales but below-average profit margin?', this Phase 1 scaffold classified the request as descriptive and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used duckdb path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "sql": "SELECT * FROM data LIMIT 5;",
+        "chart": null,
+        "errors": []
+      }
+    },
+    {
+      "id": "q6",
+      "question": "For orders with discounts above 20%, how does average profit compare with orders at 20% or below?",
+      "correctness": 0.5,
+      "contract": 1.0,
+      "guardrails": 1.0,
+      "reliability": 1.0,
+      "latency_ms": 1.6594169999999409,
+      "final_score": 0.75,
+      "passed": false,
+      "result": {
+        "question": "For orders with discounts above 20%, how does average profit compare with orders at 20% or below?",
+        "dataframe": {
+          "rows": 8,
+          "columns": 9
+        },
+        "dataset_profile": {
+          "shape": [
+            8,
+            9
+          ],
+          "numeric_columns": [
+            "sales",
+            "profit",
+            "discount",
+            "quantity"
+          ],
+          "categorical_columns": [
+            "order_id",
+            "order_date",
+            "region",
+            "category",
+            "sub_category"
+          ],
+          "missing_values": {
+            "order_id": 0,
+            "order_date": 0,
+            "region": 0,
+            "category": 0,
+            "sub_category": 0,
+            "sales": 0,
+            "profit": 0,
+            "discount": 0,
+            "quantity": 0
+          }
+        },
+        "intent": "descriptive",
+        "method": "duckdb",
+        "analysis": "Direct Answer: For 'For orders with discounts above 20%, how does average profit compare with orders at 20% or below?', this Phase 1 scaffold classified the request as descriptive and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used duckdb path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "sql": "SELECT * FROM data LIMIT 5;",
+        "chart": null,
+        "errors": []
+      }
+    },
+    {
+      "id": "q7",
+      "question": "Plot monthly sales trend and identify the month with the highest growth rate.",
+      "correctness": 1.0,
+      "contract": 1.0,
+      "guardrails": 1.0,
+      "reliability": 1.0,
+      "latency_ms": 1.7028749999998816,
+      "final_score": 0.9999999999999999,
+      "passed": true,
+      "result": {
+        "question": "Plot monthly sales trend and identify the month with the highest growth rate.",
+        "dataframe": {
+          "rows": 8,
+          "columns": 9
+        },
+        "dataset_profile": {
+          "shape": [
+            8,
+            9
+          ],
+          "numeric_columns": [
+            "sales",
+            "profit",
+            "discount",
+            "quantity"
+          ],
+          "categorical_columns": [
+            "order_id",
+            "order_date",
+            "region",
+            "category",
+            "sub_category"
+          ],
+          "missing_values": {
+            "order_id": 0,
+            "order_date": 0,
+            "region": 0,
+            "category": 0,
+            "sub_category": 0,
+            "sales": 0,
+            "profit": 0,
+            "discount": 0,
+            "quantity": 0
+          }
+        },
+        "intent": "trend",
+        "method": "pandas",
+        "analysis": "Direct Answer: For 'Plot monthly sales trend and identify the month with the highest growth rate.', this Phase 1 scaffold classified the request as trend and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used pandas path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "sql": "",
+        "chart": null,
+        "errors": []
+      }
+    },
+    {
+      "id": "q8",
+      "question": "How has profit margin changed quarter over quarter?",
+      "correctness": 0.0,
+      "contract": 0.0,
+      "guardrails": 1.0,
+      "reliability": 1.0,
+      "latency_ms": 1.5404170000001827,
+      "final_score": 0.30000000000000004,
+      "passed": false,
+      "result": {
+        "question": "How has profit margin changed quarter over quarter?",
+        "dataframe": {
+          "rows": 8,
+          "columns": 9
+        },
+        "dataset_profile": {
+          "shape": [
+            8,
+            9
+          ],
+          "numeric_columns": [
+            "sales",
+            "profit",
+            "discount",
+            "quantity"
+          ],
+          "categorical_columns": [
+            "order_id",
+            "order_date",
+            "region",
+            "category",
+            "sub_category"
+          ],
+          "missing_values": {
+            "order_id": 0,
+            "order_date": 0,
+            "region": 0,
+            "category": 0,
+            "sub_category": 0,
+            "sales": 0,
+            "profit": 0,
+            "discount": 0,
+            "quantity": 0
+          }
+        },
+        "intent": "unsupported",
+        "method": "none",
+        "analysis": "This request is out of scope for v1. Try descriptive, trend, diagnostic, or outlier questions on columns present in the CSV. Example: 'What is total sales by region?'",
+        "sql": "",
+        "chart": null,
+        "errors": [
+          "Unsupported request class for v1."
+        ]
+      }
+    },
+    {
+      "id": "q9",
+      "question": "Which 10 orders are outliers for loss and what common attributes do they share?",
+      "correctness": 1.0,
+      "contract": 1.0,
+      "guardrails": 1.0,
+      "reliability": 1.0,
+      "latency_ms": 2.2162079999996642,
+      "final_score": 0.9999999999999999,
+      "passed": true,
+      "result": {
+        "question": "Which 10 orders are outliers for loss and what common attributes do they share?",
+        "dataframe": {
+          "rows": 8,
+          "columns": 9
+        },
+        "dataset_profile": {
+          "shape": [
+            8,
+            9
+          ],
+          "numeric_columns": [
+            "sales",
+            "profit",
+            "discount",
+            "quantity"
+          ],
+          "categorical_columns": [
+            "order_id",
+            "order_date",
+            "region",
+            "category",
+            "sub_category"
+          ],
+          "missing_values": {
+            "order_id": 0,
+            "order_date": 0,
+            "region": 0,
+            "category": 0,
+            "sub_category": 0,
+            "sales": 0,
+            "profit": 0,
+            "discount": 0,
+            "quantity": 0
+          }
+        },
+        "intent": "outlier",
+        "method": "pandas",
+        "analysis": "Direct Answer: For 'Which 10 orders are outliers for loss and what common attributes do they share?', this Phase 1 scaffold classified the request as outlier and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used pandas path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "sql": "",
+        "chart": null,
+        "errors": []
+      }
+    },
+    {
+      "id": "q10",
+      "question": "Are there any states with unusually high shipping cost relative to sales?",
+      "correctness": 1.0,
+      "contract": 1.0,
+      "guardrails": 1.0,
+      "reliability": 1.0,
+      "latency_ms": 1.8698329999997654,
+      "final_score": 0.9999999999999999,
+      "passed": true,
+      "result": {
+        "question": "Are there any states with unusually high shipping cost relative to sales?",
+        "dataframe": {
+          "rows": 8,
+          "columns": 9
+        },
+        "dataset_profile": {
+          "shape": [
+            8,
+            9
+          ],
+          "numeric_columns": [
+            "sales",
+            "profit",
+            "discount",
+            "quantity"
+          ],
+          "categorical_columns": [
+            "order_id",
+            "order_date",
+            "region",
+            "category",
+            "sub_category"
+          ],
+          "missing_values": {
+            "order_id": 0,
+            "order_date": 0,
+            "region": 0,
+            "category": 0,
+            "sub_category": 0,
+            "sales": 0,
+            "profit": 0,
+            "discount": 0,
+            "quantity": 0
+          }
+        },
+        "intent": "outlier",
+        "method": "pandas",
+        "analysis": "Direct Answer: For 'Are there any states with unusually high shipping cost relative to sales?', this Phase 1 scaffold classified the request as outlier and generated a deterministic analysis response.\n\nEvidence: Dataset has 8 rows and 9 columns. Numeric columns detected: sales, profit, discount, quantity.\n\nMethod Note: Used pandas path with profile + summary helpers as a deterministic placeholder for Phase 1 orchestration.\n\nAssumptions/Interpretation: This scaffold does not yet compute question-specific metrics; it reports validated dataset context and selected intent/method.",
+        "sql": "",
+        "chart": null,
+        "errors": []
+      }
+    }
+  ]
+}
