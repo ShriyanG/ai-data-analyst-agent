@@ -4,8 +4,8 @@
     "pass_count": 7,
     "pass_rate": 0.7,
     "avg_score": 0.8799999999999999,
-    "latency_p50_ms": 11.84518750000002,
-    "latency_p95_ms": 12.40141700000008
+    "latency_p50_ms": 60.165562499605585,
+    "latency_p95_ms": 70.12112499796785
   },
   "cases": [
     {
@@ -15,7 +15,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 16.872875000000008,
+      "latency_ms": 70.12112499796785,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -69,7 +69,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 12.305082999999994,
+      "latency_ms": 60.69629199919291,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -123,7 +123,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 11.268333999999935,
+      "latency_ms": 59.63483300001826,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -177,7 +177,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 12.259791999999937,
+      "latency_ms": 71.16291600686964,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -231,7 +231,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 11.544791000000053,
+      "latency_ms": 67.23683299787808,
       "final_score": 0.75,
       "passed": false,
       "result": {
@@ -285,7 +285,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 12.145583999999987,
+      "latency_ms": 61.52208299317863,
       "final_score": 0.75,
       "passed": false,
       "result": {
@@ -339,7 +339,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 12.40141700000008,
+      "latency_ms": 54.11470899707638,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -396,7 +396,7 @@
       "contract": 0.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 1.3617500000000504,
+      "latency_ms": 24.348999999347143,
       "final_score": 0.30000000000000004,
       "passed": false,
       "result": {
@@ -452,7 +452,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 3.373916999999893,
+      "latency_ms": 49.428375001298264,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
@@ -506,7 +506,7 @@
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 2.711542000000011,
+      "latency_ms": 48.82933299813885,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {

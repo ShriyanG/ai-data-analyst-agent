@@ -5,6 +5,7 @@ from __future__ import annotations
 from langgraph.graph import END, START, StateGraph
 
 from agent.execution import execute_analysis
+from agent.llm import classify_query, summarize_with_llm
 from agent.state import AgentState
 from analytics.profiler import profile_dataframe
 from analytics.validators import validate_analysis_output
@@ -18,28 +19,24 @@ def _profile_data(state: AgentState) -> AgentState:
 
 
 def _plan_query(state: AgentState) -> AgentState:
-    """Classify query intent using simple deterministic heuristics."""
-    question = state["question"].lower()
+    """Classify query intent using the local LLM when available, then fall back to heuristics."""
+    question = state["question"]
+    lower_question = question.lower()
 
-    if any(token in question for token in ["forecast", "predict", "causal", "regression", "classify"]):
-        state["intent"] = "unsupported"
-        state["method"] = "none"
-    elif any(token in question for token in ["plot", "chart", "trend", "graph"]):
-        state["intent"] = "trend"
-        state["method"] = "pandas"
-    elif any(token in question for token in ["top", "bottom", "highest", "lowest", "total", "average"]):
-        state["intent"] = "descriptive"
-        state["method"] = "duckdb"
-    elif any(token in question for token in ["outlier", "unusual", "anomaly"]):
-        state["intent"] = "outlier"
-        state["method"] = "pandas"
-    elif any(token in question for token in ["why", "decline", "drop", "compare", "driver"]):
-        state["intent"] = "diagnostic"
-        state["method"] = "duckdb"
+    if any(token in lower_question for token in ["forecast", "predict", "causal", "regression", "classify"]):
+        fallback_intent, fallback_method = "unsupported", "none"
+    elif any(token in lower_question for token in ["plot", "chart", "trend", "graph"]):
+        fallback_intent, fallback_method = "trend", "pandas"
+    elif any(token in lower_question for token in ["top", "bottom", "highest", "lowest", "total", "average"]):
+        fallback_intent, fallback_method = "descriptive", "duckdb"
+    elif any(token in lower_question for token in ["outlier", "unusual", "anomaly"]):
+        fallback_intent, fallback_method = "outlier", "pandas"
+    elif any(token in lower_question for token in ["why", "decline", "drop", "compare", "driver"]):
+        fallback_intent, fallback_method = "diagnostic", "duckdb"
     else:
-        state["intent"] = "unsupported"
-        state["method"] = "none"
+        fallback_intent, fallback_method = "unsupported", "none"
 
+    state["intent"], state["method"] = classify_query(question, fallback_intent, fallback_method)
     return state
 
 
@@ -59,10 +56,14 @@ def _execute_analysis(state: AgentState) -> AgentState:
 
 
 def _validate_response(state: AgentState) -> AgentState:
-    """Enforce minimum quality for analysis output."""
+    """Enforce minimum quality for analysis output and optionally add an LLM summary."""
     is_valid, reason = validate_analysis_output(state.get("analysis", ""))
     if not is_valid:
         state.setdefault("errors", []).append(reason)
+
+    summary = summarize_with_llm(state.get("question", ""), state.get("analysis", ""))
+    if summary:
+        state["analysis"] = f"{state.get('analysis', '').strip()}\n\nLLM Summary:\n{summary}"
     return state
 
 
