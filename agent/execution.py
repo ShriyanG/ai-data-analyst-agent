@@ -111,7 +111,7 @@ def _run_pandas_analysis(df: pd.DataFrame, question: str) -> tuple[str, Optional
                 work_df[date_col] = pd.to_datetime(work_df[date_col], errors="coerce")
             work_df = work_df.dropna(subset=[date_col])
             if not work_df.empty:
-                trend_df = work_df.groupby(pd.Grouper(key=date_col, freq="M")).sum(numeric_only=True)
+                trend_df = work_df.groupby(pd.Grouper(key=date_col, freq="ME")).sum(numeric_only=True)
                 trend_df = trend_df.reset_index()
                 preview = trend_df.head(5).to_string(index=False)
                 return (
