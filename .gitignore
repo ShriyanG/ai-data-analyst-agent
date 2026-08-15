@@ -32,6 +32,7 @@ dist/
 
 # Data outputs
 outputs/
+.uploads/
 *.parquet
 *.db
 *.duckdb

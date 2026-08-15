@@ -2,17 +2,95 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pandas as pd
 import streamlit as st
 
 from agent.graph import build_graph
 from analytics.profiler import profile_dataframe
 
+UPLOAD_DIR = Path(__file__).resolve().parent / ".uploads"
+UPLOAD_DIR.mkdir(exist_ok=True)
+
 
 def _read_uploaded_csv(uploaded_file) -> pd.DataFrame:
     """Read the current uploaded CSV from the beginning of the file buffer."""
     uploaded_file.seek(0)
     return pd.read_csv(uploaded_file)
+
+
+def _save_uploaded_csv(uploaded_file) -> Path:
+    """Persist an uploaded file in the local .uploads directory for reuse."""
+    uploaded_file.seek(0)
+    saved_path = UPLOAD_DIR / uploaded_file.name
+    with saved_path.open("wb") as output_file:
+        output_file.write(uploaded_file.getvalue())
+    return saved_path
+
+
+def _save_uploaded_csvs(uploaded_files) -> list[Path]:
+    """Persist multiple uploaded files and return their saved paths."""
+    if not uploaded_files:
+        return []
+    return [_save_uploaded_csv(uploaded_file) for uploaded_file in uploaded_files]
+
+
+def _list_saved_datasets() -> list[Path]:
+    """Return saved CSV files in the persistent uploads directory."""
+    if not UPLOAD_DIR.exists():
+        return []
+    return sorted(
+        [path for path in UPLOAD_DIR.iterdir() if path.is_file() and path.suffix.lower() == ".csv"],
+        key=lambda path: path.name.lower(),
+    )
+
+
+def _get_available_dataset_names(uploaded_files=None, saved_datasets=None) -> list[str]:
+    """Return the combined list of uploaded and previously saved CSV names."""
+    names: list[str] = []
+    seen: set[str] = set()
+
+    for uploaded_file in uploaded_files or []:
+        if uploaded_file.name not in seen:
+            names.append(uploaded_file.name)
+            seen.add(uploaded_file.name)
+
+    for saved_path in saved_datasets or []:
+        if saved_path.name not in seen:
+            names.append(saved_path.name)
+            seen.add(saved_path.name)
+
+    return names
+
+
+def _resolve_dataset_path(selected_dataset_name: str | None, uploaded_files=None) -> Path | None:
+    """Resolve whichever CSV file is meant to be the active context."""
+    if not selected_dataset_name:
+        return None
+
+    if uploaded_files:
+        for uploaded_file in uploaded_files:
+            if uploaded_file.name == selected_dataset_name:
+                return _save_uploaded_csv(uploaded_file)
+
+    candidate = UPLOAD_DIR / selected_dataset_name
+    if candidate.exists():
+        return candidate
+
+    return None
+
+
+def _delete_saved_dataset(dataset_name: str) -> bool:
+    """Delete a previously saved CSV dataset from the local uploads directory."""
+    if not dataset_name:
+        return False
+
+    candidate = UPLOAD_DIR / dataset_name
+    if candidate.exists() and candidate.is_file():
+        candidate.unlink()
+        return True
+    return False
 
 
 def _parse_analysis_sections(analysis: str) -> dict[str, str]:
@@ -285,36 +363,64 @@ with left_col:
 
     st.markdown("### Ask a question")
     st.caption("Best results come from CSVs with fields like sales, profit, region, segment, discount, and order date.")
-    uploaded_file = st.file_uploader("Upload a CSV dataset", type=["csv"])
+
+    uploaded_files = st.file_uploader("Upload one or more CSV datasets", type=["csv"], accept_multiple_files=True)
+    saved_datasets = _list_saved_datasets()
+    available_dataset_names = _get_available_dataset_names(uploaded_files=uploaded_files, saved_datasets=saved_datasets)
+    if available_dataset_names:
+        selected_dataset_name = st.selectbox(
+            "Choose the dataset to use as analysis context",
+            available_dataset_names,
+            index=0,
+            help="Select which CSV should be used as the active context for the LLM and analytics workflow.",
+        )
+        saved_dataset_names = {path.name for path in saved_datasets}
+        if selected_dataset_name in saved_dataset_names:
+            delete_saved = st.button("Delete selected saved dataset", type="secondary", use_container_width=True)
+            if delete_saved:
+                if _delete_saved_dataset(selected_dataset_name):
+                    st.success(f"Deleted {selected_dataset_name} from the saved dataset list.")
+                    st.rerun()
+                else:
+                    st.warning(f"Could not delete {selected_dataset_name}.")
+    else:
+        selected_dataset_name = None
+
     query = st.text_area("What would you like to analyze?", height=140, placeholder="Example: What is total sales by region?")
     run = st.button("Run Analysis", type="primary", use_container_width=True)
 
 if "graph" not in st.session_state:
     st.session_state.graph = build_graph()
 
-if uploaded_file is not None:
-    try:
-        df = _read_uploaded_csv(uploaded_file)
-    except (pd.errors.EmptyDataError, pd.errors.ParserError) as exc:
-        st.error(f"Unable to read the uploaded CSV: {exc}")
-        df = None
+selected_dataset_path = None
+if available_dataset_names:
+    selected_dataset_path = _resolve_dataset_path(selected_dataset_name, uploaded_files)
+    if selected_dataset_path is not None:
+        try:
+            df = pd.read_csv(selected_dataset_path)
+        except (pd.errors.EmptyDataError, pd.errors.ParserError) as exc:
+            st.error(f"Unable to read the selected CSV: {exc}")
+            df = None
 
-    if df is not None:
-        with right_col:
-            st.markdown("### Dataset Snapshot")
-            _render_dataset_summary(df)
-            st.dataframe(df.head(20), use_container_width=True, height=320)
+        if df is not None:
+            with right_col:
+                st.markdown("### Dataset Snapshot")
+                _render_dataset_summary(df)
+                st.caption(f"Loaded from: {selected_dataset_path.name}")
+                st.dataframe(df.head(20), use_container_width=True, height=320)
 
 if run:
-    if uploaded_file is None:
-        st.warning("Upload a CSV file first.")
+    dataset_path = _resolve_dataset_path(selected_dataset_name, uploaded_files)
+
+    if dataset_path is None:
+        st.warning("Upload a CSV file or choose a saved dataset first.")
     elif not query.strip():
         st.warning("Enter a question to analyze.")
     else:
         try:
-            df = _read_uploaded_csv(uploaded_file)
+            df = pd.read_csv(dataset_path)
         except (pd.errors.EmptyDataError, pd.errors.ParserError) as exc:
-            st.error(f"Unable to read the uploaded CSV: {exc}")
+            st.error(f"Unable to read the dataset: {exc}")
             st.stop()
 
         state = {
