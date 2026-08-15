@@ -1,12 +1,12 @@
 # AI Data Analyst Agent
 
-An agentic AI data analyst that uses local LLMs, LangGraph, Pandas, and DuckDB to analyze datasets, generate insights, and visualizations from natural language queries.
+An agentic AI data analyst for CSV-based business questions. It combines local LLM-assisted routing with grounded Pandas and DuckDB execution to turn natural language prompts into traceable answers, SQL, and visual summaries.
 
 ## Overview
 
 ### What problem does it solve?
 
-Business and product teams often need quick answers from CSV data without writing SQL or Python. This project turns plain-language questions into actionable analysis by combining structured tools (Pandas, DuckDB, charts) with an LLM-driven reasoning loop.
+Business and product teams often need quick answers from CSV data without writing SQL or Python. This project is built for that exact use case: upload a dataset, ask a plain-language question, and get back a grounded answer with supporting evidence. The current version is strongest on descriptive, trend, diagnostic, and outlier-style questions over common business fields such as sales, profit, segment, region, discount, and date.
 
 ### Why agentic AI?
 
@@ -47,6 +47,14 @@ flowchart TD
 - [x] SQL generation
 - [x] Visualization
 
+## Best Fit Use Cases
+
+- Revenue and sales breakdowns by region, segment, or product
+- Trend inspection across months or other time periods
+- Quick diagnostic questions about declines, drops, or comparisons
+- Outlier review for unusually low or high numeric values
+- Lightweight analytics demos that need transparent SQL-backed answers
+
 ## Tech Stack
 
 - Frontend: Streamlit
@@ -60,6 +68,15 @@ flowchart TD
 - "What are the top products?"
 - "Why did revenue decline?"
 - "Plot monthly sales"
+- "What is total sales by region?"
+- "How does average order value vary by segment?"
+- "Are there unusually low-profit rows in the dataset?"
+
+## Current Scope
+
+- The app uses local LLM support mainly for query routing and concise summarization.
+- Core computation is grounded in deterministic Pandas and DuckDB operations.
+- It is not yet intended for forecasting, causal inference, or fully open-ended autonomous analysis.
 
 ## Evaluation
 

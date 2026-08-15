@@ -14,7 +14,36 @@ def _read_uploaded_csv(uploaded_file) -> pd.DataFrame:
 
 st.set_page_config(page_title="AI Data Analyst Agent", layout="wide")
 st.title("AI Data Analyst Agent")
-st.caption("Analyze datasets with natural language using local LLM workflows.")
+st.caption("Turn CSV files into grounded answers, charts, and traceable SQL with a local analytics workflow.")
+
+st.markdown(
+    """
+    This app is designed for business and product datasets where you need quick answers without writing SQL or Python.
+    It works best for descriptive, trend, diagnostic, and outlier-style questions on CSVs with fields such as sales, profit,
+    region, segment, discount, and order date.
+    """
+)
+
+with st.expander("What this app handles well", expanded=True):
+    st.markdown(
+        """
+        - Descriptive questions: total sales by region, top products, average values by segment
+        - Trend questions: monthly sales patterns, declines, and time-based movement
+        - Diagnostic questions: comparison-style questions grounded in the uploaded columns
+        - Outlier questions: unusually low or high values in numeric fields
+        """
+    )
+
+st.markdown("**Try prompts like:**")
+st.markdown(
+    """
+    - What is total sales by region?
+    - Which products have the highest total profit?
+    - Show the monthly sales trend.
+    - How does average order value vary by customer segment?
+    - Are there unusual low-profit rows in this dataset?
+    """
+)
 
 uploaded_file = st.file_uploader("Upload a CSV dataset", type=["csv"])
 query = st.text_area("What would you like to analyze?", height=120)
