@@ -105,6 +105,21 @@ def _sanitize_result_for_report(result: dict[str, Any]) -> dict[str, Any]:
     if chart is not None and not isinstance(chart, (str, int, float, bool, list, dict)):
         clean["chart"] = "<non-serializable-chart-object>"
 
+    result_table = clean.get("result_table")
+    if isinstance(result_table, list):
+        normalized_rows: list[dict[str, Any]] = []
+        for row in result_table:
+            if not isinstance(row, dict):
+                continue
+            normalized_row: dict[str, Any] = {}
+            for key, value in row.items():
+                if isinstance(value, (str, int, float, bool)) or value is None:
+                    normalized_row[key] = value
+                else:
+                    normalized_row[key] = str(value)
+            normalized_rows.append(normalized_row)
+        clean["result_table"] = normalized_rows
+
     return clean
 
 

@@ -13,5 +13,6 @@ class AgentState(TypedDict):
     method: str
     analysis: str
     sql: str
+    result_table: list[dict[str, Any]]
     chart: Optional[Any]
     errors: list[str]

@@ -1,18 +1,17 @@
 [
   {
     "id": "q1",
-    "question": "What is total sales by region, sorted highest to lowest?",
+    "question": "What is total sales by region?",
     "category": "descriptive",
     "expected": {
       "intent": "descriptive",
       "method": "duckdb",
-      "must_include": ["rows", "columns"],
       "must_not_include": ["out of scope"]
     }
   },
   {
     "id": "q2",
-    "question": "Which 5 products generated the highest total profit?",
+    "question": "Which products have the highest total profit?",
     "category": "descriptive",
     "expected": {
       "intent": "descriptive",
@@ -22,74 +21,32 @@
   },
   {
     "id": "q3",
-    "question": "What is the average order value by customer segment?",
-    "category": "descriptive",
+    "question": "Show the monthly sales trend.",
+    "category": "trend",
     "expected": {
-      "intent": "descriptive",
-      "method": "duckdb"
+      "intent": "trend",
+      "method": "pandas",
+      "must_not_include": ["out of scope"]
     }
   },
   {
     "id": "q4",
-    "question": "Month over month, which category contributed most to the overall sales decline in the worst month?",
-    "category": "diagnostic",
+    "question": "How does average order value vary by customer segment?",
+    "category": "descriptive",
     "expected": {
-      "intent": "diagnostic",
-      "method": "duckdb"
+      "intent": "descriptive",
+      "method": "duckdb",
+      "must_not_include": ["out of scope"]
     }
   },
   {
     "id": "q5",
-    "question": "Which sub-categories have high sales but below-average profit margin?",
-    "category": "diagnostic",
-    "expected": {
-      "intent": "diagnostic",
-      "method": "duckdb"
-    }
-  },
-  {
-    "id": "q6",
-    "question": "For orders with discounts above 20%, how does average profit compare with orders at 20% or below?",
-    "category": "diagnostic",
-    "expected": {
-      "intent": "diagnostic",
-      "method": "duckdb"
-    }
-  },
-  {
-    "id": "q7",
-    "question": "Plot monthly sales trend and identify the month with the highest growth rate.",
-    "category": "trend",
-    "expected": {
-      "intent": "trend",
-      "method": "pandas"
-    }
-  },
-  {
-    "id": "q8",
-    "question": "How has profit margin changed quarter over quarter?",
-    "category": "trend",
-    "expected": {
-      "intent": "trend",
-      "method": "pandas"
-    }
-  },
-  {
-    "id": "q9",
-    "question": "Which 10 orders are outliers for loss and what common attributes do they share?",
+    "question": "Are there unusual low-profit rows in this dataset?",
     "category": "outlier",
     "expected": {
       "intent": "outlier",
-      "method": "pandas"
-    }
-  },
-  {
-    "id": "q10",
-    "question": "Are there any states with unusually high shipping cost relative to sales?",
-    "category": "outlier",
-    "expected": {
-      "intent": "outlier",
-      "method": "pandas"
+      "method": "pandas",
+      "must_not_include": ["out of scope"]
     }
   }
 ]

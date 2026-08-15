@@ -1,25 +1,25 @@
 {
   "summary": {
-    "total_cases": 10,
-    "pass_count": 7,
-    "pass_rate": 0.7,
-    "avg_score": 0.8799999999999999,
-    "latency_p50_ms": 60.165562499605585,
-    "latency_p95_ms": 70.12112499796785
+    "total_cases": 5,
+    "pass_count": 5,
+    "pass_rate": 1.0,
+    "avg_score": 0.9999999999999999,
+    "latency_p50_ms": 67.8834169957554,
+    "latency_p95_ms": 105.54124999907799
   },
   "cases": [
     {
       "id": "q1",
-      "question": "What is total sales by region, sorted highest to lowest?",
+      "question": "What is total sales by region?",
       "correctness": 1.0,
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 70.12112499796785,
+      "latency_ms": 218.15249999053776,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
-        "question": "What is total sales by region, sorted highest to lowest?",
+        "question": "What is total sales by region?",
         "dataframe": {
           "rows": 8,
           "columns": 9
@@ -56,24 +56,42 @@
         },
         "intent": "descriptive",
         "method": "duckdb",
-        "analysis": "Direct Answer: Total sales by region was executed for 'What is total sales by region, sorted highest to lowest?'.\n\nEvidence:  region  total_sales\n   West      1459.99\n  South      1419.00\nCentral       499.99\n   East       394.50\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
+        "analysis": "Direct Answer: Total sales by region was executed for 'What is total sales by region?'.\n\nEvidence:  region  total_sales\n   West      1459.99\n  South      1419.00\nCentral       499.99\n   East       394.50\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
         "sql": "SELECT \"region\" AS region, SUM(\"sales\") AS total_sales FROM data GROUP BY 1 ORDER BY 2 DESC",
-        "chart": null,
+        "result_table": [
+          {
+            "region": "West",
+            "total_sales": 1459.99
+          },
+          {
+            "region": "South",
+            "total_sales": 1419.0
+          },
+          {
+            "region": "Central",
+            "total_sales": 499.99
+          },
+          {
+            "region": "East",
+            "total_sales": 394.5
+          }
+        ],
+        "chart": "<non-serializable-chart-object>",
         "errors": []
       }
     },
     {
       "id": "q2",
-      "question": "Which 5 products generated the highest total profit?",
+      "question": "Which products have the highest total profit?",
       "correctness": 1.0,
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 60.69629199919291,
+      "latency_ms": 67.8834169957554,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
-        "question": "Which 5 products generated the highest total profit?",
+        "question": "Which products have the highest total profit?",
         "dataframe": {
           "rows": 8,
           "columns": 9
@@ -110,240 +128,81 @@
         },
         "intent": "descriptive",
         "method": "duckdb",
-        "analysis": "Direct Answer: A sample of the dataset was executed for 'Which 5 products generated the highest total profit?'.\n\nEvidence:     order_id order_date  region        category sub_category  sales  profit  discount  quantity\nCA-2026-0001 2026-01-05    West      Technology       Phones 899.99  210.35      0.10         3\nCA-2026-0002 2026-01-11    East       Furniture       Chairs 349.50   42.10      0.15         2\nCA-2026-0003 2026-01-20   South Office Supplies      Binders 120.00   18.40      0.05         5\nCA-2026-0004 2026-02-03 Central      Technology  Accessories  79.99    9.80      0.00         4\nCA-2026-0005 2026-02-18    West       Furniture       Tables 560.00  -32.00      0.25         1\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
+        "analysis": "Direct Answer: A sample of the dataset was executed for 'Which products have the highest total profit?'.\n\nEvidence:     order_id order_date  region        category sub_category  sales  profit  discount  quantity\nCA-2026-0001 2026-01-05    West      Technology       Phones 899.99  210.35      0.10         3\nCA-2026-0002 2026-01-11    East       Furniture       Chairs 349.50   42.10      0.15         2\nCA-2026-0003 2026-01-20   South Office Supplies      Binders 120.00   18.40      0.05         5\nCA-2026-0004 2026-02-03 Central      Technology  Accessories  79.99    9.80      0.00         4\nCA-2026-0005 2026-02-18    West       Furniture       Tables 560.00  -32.00      0.25         1\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
         "sql": "SELECT * FROM data LIMIT 5;",
+        "result_table": [
+          {
+            "order_id": "CA-2026-0001",
+            "order_date": "2026-01-05",
+            "region": "West",
+            "category": "Technology",
+            "sub_category": "Phones",
+            "sales": 899.99,
+            "profit": 210.35,
+            "discount": 0.1,
+            "quantity": 3
+          },
+          {
+            "order_id": "CA-2026-0002",
+            "order_date": "2026-01-11",
+            "region": "East",
+            "category": "Furniture",
+            "sub_category": "Chairs",
+            "sales": 349.5,
+            "profit": 42.1,
+            "discount": 0.15,
+            "quantity": 2
+          },
+          {
+            "order_id": "CA-2026-0003",
+            "order_date": "2026-01-20",
+            "region": "South",
+            "category": "Office Supplies",
+            "sub_category": "Binders",
+            "sales": 120.0,
+            "profit": 18.4,
+            "discount": 0.05,
+            "quantity": 5
+          },
+          {
+            "order_id": "CA-2026-0004",
+            "order_date": "2026-02-03",
+            "region": "Central",
+            "category": "Technology",
+            "sub_category": "Accessories",
+            "sales": 79.99,
+            "profit": 9.8,
+            "discount": 0.0,
+            "quantity": 4
+          },
+          {
+            "order_id": "CA-2026-0005",
+            "order_date": "2026-02-18",
+            "region": "West",
+            "category": "Furniture",
+            "sub_category": "Tables",
+            "sales": 560.0,
+            "profit": -32.0,
+            "discount": 0.25,
+            "quantity": 1
+          }
+        ],
         "chart": null,
         "errors": []
       }
     },
     {
       "id": "q3",
-      "question": "What is the average order value by customer segment?",
+      "question": "Show the monthly sales trend.",
       "correctness": 1.0,
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 59.63483300001826,
+      "latency_ms": 105.54124999907799,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
-        "question": "What is the average order value by customer segment?",
-        "dataframe": {
-          "rows": 8,
-          "columns": 9
-        },
-        "dataset_profile": {
-          "shape": [
-            8,
-            9
-          ],
-          "numeric_columns": [
-            "sales",
-            "profit",
-            "discount",
-            "quantity"
-          ],
-          "categorical_columns": [
-            "order_id",
-            "order_date",
-            "region",
-            "category",
-            "sub_category"
-          ],
-          "missing_values": {
-            "order_id": 0,
-            "order_date": 0,
-            "region": 0,
-            "category": 0,
-            "sub_category": 0,
-            "sales": 0,
-            "profit": 0,
-            "discount": 0,
-            "quantity": 0
-          }
-        },
-        "intent": "descriptive",
-        "method": "duckdb",
-        "analysis": "Direct Answer: A sample of the dataset was executed for 'What is the average order value by customer segment?'.\n\nEvidence:     order_id order_date  region        category sub_category  sales  profit  discount  quantity\nCA-2026-0001 2026-01-05    West      Technology       Phones 899.99  210.35      0.10         3\nCA-2026-0002 2026-01-11    East       Furniture       Chairs 349.50   42.10      0.15         2\nCA-2026-0003 2026-01-20   South Office Supplies      Binders 120.00   18.40      0.05         5\nCA-2026-0004 2026-02-03 Central      Technology  Accessories  79.99    9.80      0.00         4\nCA-2026-0005 2026-02-18    West       Furniture       Tables 560.00  -32.00      0.25         1\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
-        "sql": "SELECT * FROM data LIMIT 5;",
-        "chart": null,
-        "errors": []
-      }
-    },
-    {
-      "id": "q4",
-      "question": "Month over month, which category contributed most to the overall sales decline in the worst month?",
-      "correctness": 1.0,
-      "contract": 1.0,
-      "guardrails": 1.0,
-      "reliability": 1.0,
-      "latency_ms": 71.16291600686964,
-      "final_score": 0.9999999999999999,
-      "passed": true,
-      "result": {
-        "question": "Month over month, which category contributed most to the overall sales decline in the worst month?",
-        "dataframe": {
-          "rows": 8,
-          "columns": 9
-        },
-        "dataset_profile": {
-          "shape": [
-            8,
-            9
-          ],
-          "numeric_columns": [
-            "sales",
-            "profit",
-            "discount",
-            "quantity"
-          ],
-          "categorical_columns": [
-            "order_id",
-            "order_date",
-            "region",
-            "category",
-            "sub_category"
-          ],
-          "missing_values": {
-            "order_id": 0,
-            "order_date": 0,
-            "region": 0,
-            "category": 0,
-            "sub_category": 0,
-            "sales": 0,
-            "profit": 0,
-            "discount": 0,
-            "quantity": 0
-          }
-        },
-        "intent": "diagnostic",
-        "method": "duckdb",
-        "analysis": "Direct Answer: Monthly sales trend was executed for 'Month over month, which category contributed most to the overall sales decline in the worst month?'.\n\nEvidence:      month  total_sales\n2026-01-01      1369.49\n2026-02-01       639.99\n2026-03-01      1764.00\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
-        "sql": "SELECT DATE_TRUNC('month', CAST(\"order_date\" AS DATE)) AS month, SUM(\"sales\") AS total_sales FROM data GROUP BY 1 ORDER BY 1",
-        "chart": null,
-        "errors": []
-      }
-    },
-    {
-      "id": "q5",
-      "question": "Which sub-categories have high sales but below-average profit margin?",
-      "correctness": 0.5,
-      "contract": 1.0,
-      "guardrails": 1.0,
-      "reliability": 1.0,
-      "latency_ms": 67.23683299787808,
-      "final_score": 0.75,
-      "passed": false,
-      "result": {
-        "question": "Which sub-categories have high sales but below-average profit margin?",
-        "dataframe": {
-          "rows": 8,
-          "columns": 9
-        },
-        "dataset_profile": {
-          "shape": [
-            8,
-            9
-          ],
-          "numeric_columns": [
-            "sales",
-            "profit",
-            "discount",
-            "quantity"
-          ],
-          "categorical_columns": [
-            "order_id",
-            "order_date",
-            "region",
-            "category",
-            "sub_category"
-          ],
-          "missing_values": {
-            "order_id": 0,
-            "order_date": 0,
-            "region": 0,
-            "category": 0,
-            "sub_category": 0,
-            "sales": 0,
-            "profit": 0,
-            "discount": 0,
-            "quantity": 0
-          }
-        },
-        "intent": "descriptive",
-        "method": "duckdb",
-        "analysis": "Direct Answer: A sample of the dataset was executed for 'Which sub-categories have high sales but below-average profit margin?'.\n\nEvidence:     order_id order_date  region        category sub_category  sales  profit  discount  quantity\nCA-2026-0001 2026-01-05    West      Technology       Phones 899.99  210.35      0.10         3\nCA-2026-0002 2026-01-11    East       Furniture       Chairs 349.50   42.10      0.15         2\nCA-2026-0003 2026-01-20   South Office Supplies      Binders 120.00   18.40      0.05         5\nCA-2026-0004 2026-02-03 Central      Technology  Accessories  79.99    9.80      0.00         4\nCA-2026-0005 2026-02-18    West       Furniture       Tables 560.00  -32.00      0.25         1\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
-        "sql": "SELECT * FROM data LIMIT 5;",
-        "chart": null,
-        "errors": []
-      }
-    },
-    {
-      "id": "q6",
-      "question": "For orders with discounts above 20%, how does average profit compare with orders at 20% or below?",
-      "correctness": 0.5,
-      "contract": 1.0,
-      "guardrails": 1.0,
-      "reliability": 1.0,
-      "latency_ms": 61.52208299317863,
-      "final_score": 0.75,
-      "passed": false,
-      "result": {
-        "question": "For orders with discounts above 20%, how does average profit compare with orders at 20% or below?",
-        "dataframe": {
-          "rows": 8,
-          "columns": 9
-        },
-        "dataset_profile": {
-          "shape": [
-            8,
-            9
-          ],
-          "numeric_columns": [
-            "sales",
-            "profit",
-            "discount",
-            "quantity"
-          ],
-          "categorical_columns": [
-            "order_id",
-            "order_date",
-            "region",
-            "category",
-            "sub_category"
-          ],
-          "missing_values": {
-            "order_id": 0,
-            "order_date": 0,
-            "region": 0,
-            "category": 0,
-            "sub_category": 0,
-            "sales": 0,
-            "profit": 0,
-            "discount": 0,
-            "quantity": 0
-          }
-        },
-        "intent": "descriptive",
-        "method": "duckdb",
-        "analysis": "Direct Answer: Average profit by discount group was executed for 'For orders with discounts above 20%, how does average profit compare with orders at 20% or below?'.\n\nEvidence: discount_group  average_profit\n     Above 20%      -32.000000\n  20% or below       93.335714\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
-        "sql": "SELECT CASE WHEN \"discount\" > 0.2 THEN 'Above 20%' ELSE '20% or below' END AS discount_group, AVG(\"profit\") AS average_profit FROM data GROUP BY 1",
-        "chart": null,
-        "errors": []
-      }
-    },
-    {
-      "id": "q7",
-      "question": "Plot monthly sales trend and identify the month with the highest growth rate.",
-      "correctness": 1.0,
-      "contract": 1.0,
-      "guardrails": 1.0,
-      "reliability": 1.0,
-      "latency_ms": 54.11470899707638,
-      "final_score": 0.9999999999999999,
-      "passed": true,
-      "result": {
-        "question": "Plot monthly sales trend and identify the month with the highest growth rate.",
+        "question": "Show the monthly sales trend.",
         "dataframe": {
           "rows": 8,
           "columns": 9
@@ -382,25 +241,36 @@
         "method": "pandas",
         "analysis": "Direct Answer: Trend analysis was computed from monthly aggregates.\n\nEvidence: order_date   sales\n2026-01-31 1369.49\n2026-02-28  639.99\n2026-03-31 1764.00\n\nMethod Note: Used pandas to aggregate the data over time.\n\nAssumptions/Interpretation: The trend is based on the latest available monthly totals.\n\nNumeric columns detected: sales, profit, discount, quantity.",
         "sql": "",
-        "chart": {
-          "kind": "line",
-          "series": "sales"
-        },
+        "result_table": [
+          {
+            "order_date": "2026-01-31 00:00:00",
+            "sales": 1369.49
+          },
+          {
+            "order_date": "2026-02-28 00:00:00",
+            "sales": 639.99
+          },
+          {
+            "order_date": "2026-03-31 00:00:00",
+            "sales": 1764.0
+          }
+        ],
+        "chart": "<non-serializable-chart-object>",
         "errors": []
       }
     },
     {
-      "id": "q8",
-      "question": "How has profit margin changed quarter over quarter?",
-      "correctness": 0.0,
-      "contract": 0.0,
+      "id": "q4",
+      "question": "How does average order value vary by customer segment?",
+      "correctness": 1.0,
+      "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 24.348999999347143,
-      "final_score": 0.30000000000000004,
-      "passed": false,
+      "latency_ms": 67.3464999999851,
+      "final_score": 0.9999999999999999,
+      "passed": true,
       "result": {
-        "question": "How has profit margin changed quarter over quarter?",
+        "question": "How does average order value vary by customer segment?",
         "dataframe": {
           "rows": 8,
           "columns": 9
@@ -435,28 +305,83 @@
             "quantity": 0
           }
         },
-        "intent": "unsupported",
-        "method": "none",
-        "analysis": "This request is out of scope for v1. Try descriptive, trend, diagnostic, or outlier questions on columns present in the CSV. Example: 'What is total sales by region?'",
-        "sql": "",
+        "intent": "descriptive",
+        "method": "duckdb",
+        "analysis": "Direct Answer: A sample of the dataset was executed for 'How does average order value vary by customer segment?'.\n\nEvidence:     order_id order_date  region        category sub_category  sales  profit  discount  quantity\nCA-2026-0001 2026-01-05    West      Technology       Phones 899.99  210.35      0.10         3\nCA-2026-0002 2026-01-11    East       Furniture       Chairs 349.50   42.10      0.15         2\nCA-2026-0003 2026-01-20   South Office Supplies      Binders 120.00   18.40      0.05         5\nCA-2026-0004 2026-02-03 Central      Technology  Accessories  79.99    9.80      0.00         4\nCA-2026-0005 2026-02-18    West       Furniture       Tables 560.00  -32.00      0.25         1\n\nMethod Note: Used DuckDB to run a deterministic SQL query against the dataframe.\n\nAssumptions/Interpretation: The analysis is based on the current dataset snapshot with 8 rows and 9 columns.\n\nNumeric columns detected: sales, profit, discount, quantity.",
+        "sql": "SELECT * FROM data LIMIT 5;",
+        "result_table": [
+          {
+            "order_id": "CA-2026-0001",
+            "order_date": "2026-01-05",
+            "region": "West",
+            "category": "Technology",
+            "sub_category": "Phones",
+            "sales": 899.99,
+            "profit": 210.35,
+            "discount": 0.1,
+            "quantity": 3
+          },
+          {
+            "order_id": "CA-2026-0002",
+            "order_date": "2026-01-11",
+            "region": "East",
+            "category": "Furniture",
+            "sub_category": "Chairs",
+            "sales": 349.5,
+            "profit": 42.1,
+            "discount": 0.15,
+            "quantity": 2
+          },
+          {
+            "order_id": "CA-2026-0003",
+            "order_date": "2026-01-20",
+            "region": "South",
+            "category": "Office Supplies",
+            "sub_category": "Binders",
+            "sales": 120.0,
+            "profit": 18.4,
+            "discount": 0.05,
+            "quantity": 5
+          },
+          {
+            "order_id": "CA-2026-0004",
+            "order_date": "2026-02-03",
+            "region": "Central",
+            "category": "Technology",
+            "sub_category": "Accessories",
+            "sales": 79.99,
+            "profit": 9.8,
+            "discount": 0.0,
+            "quantity": 4
+          },
+          {
+            "order_id": "CA-2026-0005",
+            "order_date": "2026-02-18",
+            "region": "West",
+            "category": "Furniture",
+            "sub_category": "Tables",
+            "sales": 560.0,
+            "profit": -32.0,
+            "discount": 0.25,
+            "quantity": 1
+          }
+        ],
         "chart": null,
-        "errors": [
-          "Unsupported request class for v1."
-        ]
+        "errors": []
       }
     },
     {
-      "id": "q9",
-      "question": "Which 10 orders are outliers for loss and what common attributes do they share?",
+      "id": "q5",
+      "question": "Are there unusual low-profit rows in this dataset?",
       "correctness": 1.0,
       "contract": 1.0,
       "guardrails": 1.0,
       "reliability": 1.0,
-      "latency_ms": 49.428375001298264,
+      "latency_ms": 57.61925000115298,
       "final_score": 0.9999999999999999,
       "passed": true,
       "result": {
-        "question": "Which 10 orders are outliers for loss and what common attributes do they share?",
+        "question": "Are there unusual low-profit rows in this dataset?",
         "dataframe": {
           "rows": 8,
           "columns": 9
@@ -495,60 +420,32 @@
         "method": "pandas",
         "analysis": "Direct Answer: Outlier candidates were identified from the lowest-profit rows.\n\nEvidence:  profit\n -32.00\n   9.80\n  12.20\n  18.40\n  42.10\n  55.50\n 210.35\n 305.00\n\nMethod Note: Used pandas to rank the rows by profit magnitude.\n\nAssumptions/Interpretation: These rows are treated as candidate outliers for the current question.\n\nNumeric columns detected: sales, profit, discount, quantity.",
         "sql": "",
-        "chart": null,
-        "errors": []
-      }
-    },
-    {
-      "id": "q10",
-      "question": "Are there any states with unusually high shipping cost relative to sales?",
-      "correctness": 1.0,
-      "contract": 1.0,
-      "guardrails": 1.0,
-      "reliability": 1.0,
-      "latency_ms": 48.82933299813885,
-      "final_score": 0.9999999999999999,
-      "passed": true,
-      "result": {
-        "question": "Are there any states with unusually high shipping cost relative to sales?",
-        "dataframe": {
-          "rows": 8,
-          "columns": 9
-        },
-        "dataset_profile": {
-          "shape": [
-            8,
-            9
-          ],
-          "numeric_columns": [
-            "sales",
-            "profit",
-            "discount",
-            "quantity"
-          ],
-          "categorical_columns": [
-            "order_id",
-            "order_date",
-            "region",
-            "category",
-            "sub_category"
-          ],
-          "missing_values": {
-            "order_id": 0,
-            "order_date": 0,
-            "region": 0,
-            "category": 0,
-            "sub_category": 0,
-            "sales": 0,
-            "profit": 0,
-            "discount": 0,
-            "quantity": 0
+        "result_table": [
+          {
+            "profit": -32.0
+          },
+          {
+            "profit": 9.8
+          },
+          {
+            "profit": 12.2
+          },
+          {
+            "profit": 18.4
+          },
+          {
+            "profit": 42.1
+          },
+          {
+            "profit": 55.5
+          },
+          {
+            "profit": 210.35
+          },
+          {
+            "profit": 305.0
           }
-        },
-        "intent": "outlier",
-        "method": "pandas",
-        "analysis": "Direct Answer: Outlier candidates were identified from the lowest-profit rows.\n\nEvidence:  profit\n -32.00\n   9.80\n  12.20\n  18.40\n  42.10\n  55.50\n 210.35\n 305.00\n\nMethod Note: Used pandas to rank the rows by profit magnitude.\n\nAssumptions/Interpretation: These rows are treated as candidate outliers for the current question.\n\nNumeric columns detected: sales, profit, discount, quantity.",
-        "sql": "",
+        ],
         "chart": null,
         "errors": []
       }

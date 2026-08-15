@@ -10,6 +10,7 @@ import pandas as pd
 from agent.state import AgentState
 from agent.tools import run_duckdb_query, summarize_dataframe
 from analytics.profiler import profile_dataframe
+from visualizations.charts import make_bar_chart, make_line_chart
 
 
 def _normalize_name(value: str) -> str:
@@ -28,6 +29,24 @@ def _find_column(df: pd.DataFrame, *candidates: str) -> Optional[str]:
 def _quote_identifier(name: str) -> str:
     escaped = name.replace('"', '""')
     return '"' + escaped + '"'
+
+
+def _build_chart_for_result(result: pd.DataFrame, metric_label: str) -> Optional[Any]:
+    """Create a chart for common result shapes used in the demo workflow."""
+    if result.empty or len(result.columns) < 2:
+        return None
+
+    x_col = result.columns[0]
+    y_col = result.columns[1]
+
+    if not pd.api.types.is_numeric_dtype(result[y_col]):
+        return None
+
+    chart_df = result.copy()
+    if "trend" in metric_label or str(x_col).lower() == "month":
+        return make_line_chart(chart_df, x_col, y_col)
+
+    return make_bar_chart(chart_df.head(10), x_col, y_col)
 
 
 def _build_duckdb_sql(df: pd.DataFrame, question: str) -> tuple[str, str]:
@@ -116,7 +135,7 @@ def _run_pandas_analysis(df: pd.DataFrame, question: str) -> tuple[str, Optional
                 preview = trend_df.head(5).to_string(index=False)
                 return (
                     f"Direct Answer: Trend analysis was computed from monthly aggregates.\n\nEvidence: {preview}\n\nMethod Note: Used pandas to aggregate the data over time.\n\nAssumptions/Interpretation: The trend is based on the latest available monthly totals.",
-                    {"kind": "line", "series": sales_col},
+                    {"kind": "line", "series": sales_col, "table": trend_df},
                 )
 
     if "outlier" in lower_question or "unusual" in lower_question or "anomaly" in lower_question:
@@ -128,7 +147,7 @@ def _run_pandas_analysis(df: pd.DataFrame, question: str) -> tuple[str, Optional
             preview = outlier_df.head(10).to_string(index=False)
             return (
                 f"Direct Answer: Outlier candidates were identified from the lowest-profit rows.\n\nEvidence: {preview}\n\nMethod Note: Used pandas to rank the rows by profit magnitude.\n\nAssumptions/Interpretation: These rows are treated as candidate outliers for the current question.",
-                None,
+                {"kind": "table", "table": outlier_df.head(10)},
             )
 
     return (
@@ -158,11 +177,22 @@ def execute_analysis(state: AgentState) -> AgentState:
             f"Assumptions/Interpretation: The analysis is based on the current dataset snapshot with {summary['rows']} rows and {summary['columns']} columns."
         )
         state["sql"] = sql
+        state["result_table"] = result.head(10).to_dict(orient="records")
+        state["chart"] = _build_chart_for_result(result, metric_label)
     else:
         analysis, chart = _run_pandas_analysis(df, question)
         state["analysis"] = analysis
         state["sql"] = ""
-        state["chart"] = chart
+        if isinstance(chart, dict):
+            table = chart.get("table")
+            state["result_table"] = table.head(10).to_dict(orient="records") if isinstance(table, pd.DataFrame) else []
+            if chart.get("kind") == "line" and isinstance(table, pd.DataFrame) and len(table.columns) >= 2:
+                state["chart"] = make_line_chart(table, table.columns[0], table.columns[1])
+            else:
+                state["chart"] = None
+        else:
+            state["result_table"] = []
+            state["chart"] = chart
 
     numeric_cols = ", ".join(profile.get("numeric_columns", [])) or "None"
     if "Numeric columns detected:" not in state["analysis"]:
