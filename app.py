@@ -110,21 +110,22 @@ st.markdown(
     <style>
         .stApp {
             background:
-                radial-gradient(circle at top left, rgba(224, 242, 254, 0.95), transparent 32%),
-                radial-gradient(circle at top right, rgba(254, 240, 138, 0.55), transparent 22%),
-                linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+                radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 28%),
+                radial-gradient(circle at top right, rgba(168, 85, 247, 0.14), transparent 24%),
+                linear-gradient(180deg, #020817 0%, #0f172a 100%);
+            color: #e2e8f0;
         }
         .stMarkdown, .stCaption, label, .stTextArea label, .stFileUploader label {
-            color: #0f172a;
+            color: #e2e8f0;
         }
         h1 {
-            color: #0b1220 !important;
+            color: #f8fafc !important;
             letter-spacing: -0.03em;
             font-weight: 800;
-            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
+            text-shadow: none;
         }
         [data-testid="stCaptionContainer"] {
-            color: #334155;
+            color: #cbd5e1;
         }
         .hero-panel {
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.92));
@@ -132,7 +133,7 @@ st.markdown(
             border-radius: 24px;
             padding: 1.4rem 1.5rem;
             border: 1px solid rgba(148, 163, 184, 0.18);
-            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+            box-shadow: 0 24px 60px rgba(2, 8, 23, 0.6);
             margin-bottom: 1rem;
         }
         .hero-panel h3 {
@@ -145,60 +146,66 @@ st.markdown(
             line-height: 1.55;
         }
         .answer-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.92));
-            border: 1px solid rgba(148, 163, 184, 0.25);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.92));
+            border: 1px solid rgba(148, 163, 184, 0.2);
             border-radius: 18px;
             padding: 1rem 1.1rem;
-            color: #0f172a;
-            box-shadow: 0 18px 40px rgba(148, 163, 184, 0.16);
+            color: #e2e8f0;
+            box-shadow: 0 18px 40px rgba(2, 8, 23, 0.5);
             font-size: 1rem;
             line-height: 1.6;
         }
         .capability-card {
-            background: rgba(255, 255, 255, 0.74);
+            background: rgba(15, 23, 42, 0.74);
             border: 1px solid rgba(148, 163, 184, 0.2);
             border-radius: 18px;
             padding: 0.9rem 1rem;
             min-height: 132px;
-            box-shadow: 0 10px 30px rgba(148, 163, 184, 0.12);
+            box-shadow: 0 10px 30px rgba(2, 8, 23, 0.35);
         }
         .capability-card h4 {
             margin: 0 0 0.4rem 0;
-            color: #0f172a;
+            color: #f8fafc;
         }
         .capability-card p {
             margin: 0;
-            color: #334155;
+            color: #cbd5e1;
             line-height: 1.5;
         }
         .stButton > button {
-            background: linear-gradient(135deg, #0f172a, #1d4ed8);
+            background: linear-gradient(135deg, #1d4ed8, #2563eb);
             color: #f8fafc;
-            border: 1px solid rgba(15, 23, 42, 0.2);
+            border: 1px solid rgba(96, 165, 250, 0.5);
             border-radius: 14px;
             font-weight: 700;
-            box-shadow: 0 14px 28px rgba(29, 78, 216, 0.22);
+            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.3);
         }
         .stButton > button:hover {
-            background: linear-gradient(135deg, #0b1220, #1e40af);
+            background: linear-gradient(135deg, #1e40af, #2563eb);
             color: #ffffff;
-            border-color: rgba(30, 64, 175, 0.45);
+            border-color: rgba(147, 197, 253, 0.75);
         }
         .stTextArea textarea {
-            background: rgba(255, 255, 255, 0.96);
-            color: #0f172a;
+            background: rgba(15, 23, 42, 0.9);
+            color: #f8fafc;
             border: 1px solid rgba(148, 163, 184, 0.45);
         }
         [data-testid="stFileUploaderDropzone"] {
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px dashed rgba(29, 78, 216, 0.45);
-            color: #0f172a;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px dashed rgba(96, 165, 250, 0.5);
+            color: #e2e8f0;
         }
         [data-testid="stFileUploaderDropzone"] * {
-            color: #0f172a;
+            color: #e2e8f0;
         }
         [data-testid="stVerticalBlockBorderWrapper"] {
-            background: rgba(255, 255, 255, 0.82);
+            background: rgba(15, 23, 42, 0.4);
+        }
+        [data-testid="stDataFrameContainer"] {
+            background: rgba(15, 23, 42, 0.75);
+        }
+        .stDataFrame, .stTable {
+            color: #e2e8f0;
         }
     </style>
     """,
@@ -265,34 +272,22 @@ capability_cols[3].markdown(
 left_col, right_col = st.columns([0.95, 1.35], gap="large")
 
 with left_col:
+    st.markdown("**Try prompts like:**")
+    st.markdown(
+        """
+        - What is total sales by region?
+        - Which products have the highest total profit?
+        - Show the monthly sales trend.
+        - How does average order value vary by customer segment?
+        - Are there unusual low-profit rows in this dataset?
+        """
+    )
+
     st.markdown("### Ask a question")
     st.caption("Best results come from CSVs with fields like sales, profit, region, segment, discount, and order date.")
     uploaded_file = st.file_uploader("Upload a CSV dataset", type=["csv"])
     query = st.text_area("What would you like to analyze?", height=140, placeholder="Example: What is total sales by region?")
     run = st.button("Run Analysis", type="primary", use_container_width=True)
-
-    with st.container(border=True):
-        st.markdown("**Try prompts like:**")
-        st.markdown(
-            """
-            - What is total sales by region?
-            - Which products have the highest total profit?
-            - Show the monthly sales trend.
-            - How does average order value vary by customer segment?
-            - Are there unusual low-profit rows in this dataset?
-            """
-        )
-
-    with st.container(border=True):
-        st.markdown("**What you should expect**")
-        st.markdown(
-            """
-            - A direct answer in plain English
-            - Evidence pulled from the uploaded dataset
-            - SQL when the query uses the DuckDB path
-            - Execution notes and assumptions for traceability
-            """
-        )
 
 if "graph" not in st.session_state:
     st.session_state.graph = build_graph()
