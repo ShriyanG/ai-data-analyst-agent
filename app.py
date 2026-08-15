@@ -6,6 +6,12 @@ import streamlit as st
 from agent.graph import build_graph
 
 
+def _read_uploaded_csv(uploaded_file) -> pd.DataFrame:
+    """Read the current uploaded CSV from the beginning of the file buffer."""
+    uploaded_file.seek(0)
+    return pd.read_csv(uploaded_file)
+
+
 st.set_page_config(page_title="AI Data Analyst Agent", layout="wide")
 st.title("AI Data Analyst Agent")
 st.caption("Analyze datasets with natural language using local LLM workflows.")
@@ -18,9 +24,15 @@ if "graph" not in st.session_state:
     st.session_state.graph = build_graph()
 
 if uploaded_file is not None:
-    df = pd.read_csv(uploaded_file)
-    st.subheader("Dataset Preview")
-    st.dataframe(df.head(20), use_container_width=True)
+    try:
+        df = _read_uploaded_csv(uploaded_file)
+    except (pd.errors.EmptyDataError, pd.errors.ParserError) as exc:
+        st.error(f"Unable to read the uploaded CSV: {exc}")
+        df = None
+
+    if df is not None:
+        st.subheader("Dataset Preview")
+        st.dataframe(df.head(20), use_container_width=True)
 
 if run:
     if uploaded_file is None:
@@ -28,7 +40,12 @@ if run:
     elif not query.strip():
         st.warning("Enter a question to analyze.")
     else:
-        df = pd.read_csv(uploaded_file)
+        try:
+            df = _read_uploaded_csv(uploaded_file)
+        except (pd.errors.EmptyDataError, pd.errors.ParserError) as exc:
+            st.error(f"Unable to read the uploaded CSV: {exc}")
+            st.stop()
+
         state = {
             "question": query,
             "dataframe": df,
