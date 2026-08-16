@@ -52,8 +52,13 @@ def classify_query(
     fallback_method: str,
     model: str = DEFAULT_MODEL,
     runner: Optional[Callable[[str, str], str]] = None,
+    dataset_columns: Optional[list[str]] = None,
 ) -> Tuple[str, str]:
     """Use the local model to classify a query when available; otherwise return the fallback."""
+    schema_context = ""
+    if dataset_columns:
+        schema_context = "\nAvailable dataset columns:\n- " + "\n- ".join(dataset_columns) + "\n"
+
     prompt = f"""You are routing a natural-language analytics request.
 Classify it into one of these intents and methods.
 
@@ -62,7 +67,7 @@ Methods: duckdb, pandas, none
 
 Return JSON only in the form {{"intent": "...", "method": "..."}}
 
-Question: {question}
+Question: {question}{schema_context}
 """
 
     try:

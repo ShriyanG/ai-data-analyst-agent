@@ -125,16 +125,24 @@ def _parse_analysis_sections(analysis: str) -> dict[str, str]:
 
 def _render_dataset_summary(df: pd.DataFrame) -> None:
     profile = profile_dataframe(df)
+    all_columns = [
+        str(column).strip()
+        for column in profile.get("columns", df.columns.tolist())
+        if str(column).strip()
+    ]
+    numeric_fields = [
+        str(column).strip()
+        for column in profile.get("numeric_columns", [])
+        if str(column).strip()
+    ]
+
     metric_cols = st.columns(4)
     metric_cols[0].metric("Rows", f"{df.shape[0]:,}")
     metric_cols[1].metric("Columns", f"{df.shape[1]:,}")
-    metric_cols[2].metric("Numeric Fields", len(profile.get("numeric_columns", [])))
+    metric_cols[2].metric("Numeric Fields", len(numeric_fields))
     metric_cols[3].metric("Categorical Fields", len(profile.get("categorical_columns", [])))
 
-    st.caption(
-        "Detected numeric columns: "
-        + (", ".join(profile.get("numeric_columns", [])[:8]) or "None")
-    )
+    st.caption("Columns: " + (", ".join(all_columns[:8]) if all_columns else "None"))
 
 
 def _render_analysis(result: dict) -> None:
@@ -153,28 +161,18 @@ def _render_analysis(result: dict) -> None:
 
     result_table = pd.DataFrame(result.get("result_table", []))
 
-    detail_cols = st.columns([1.3, 1])
-    with detail_cols[0]:
-        if result.get("chart") is not None:
-            st.markdown("### Visual")
-            st.pyplot(result["chart"], clear_figure=False)
-        st.markdown("### Evidence")
-        if not result_table.empty:
-            st.dataframe(result_table, use_container_width=True, hide_index=True)
-        else:
-            st.code(evidence, language="text")
+    if result.get("chart") is not None:
+        st.markdown("### Visual")
+        st.pyplot(result["chart"], clear_figure=False)
 
-    with detail_cols[1]:
-        st.markdown("### Execution Notes")
-        st.markdown(f"**Method**\n\n{method_note}")
-        st.markdown(f"**Assumptions**\n\n{assumptions}")
-        if numeric_columns:
-            st.markdown(f"**Numeric Columns**\n\n{numeric_columns}")
-        if llm_summary:
-            st.markdown(f"**LLM Summary**\n\n{llm_summary}")
+    st.markdown("### Evidence")
+    if not result_table.empty:
+        st.dataframe(result_table, use_container_width=True, hide_index=True)
+    else:
+        st.code(evidence, language="text")
 
     if result.get("sql"):
-        with st.expander("SQL Used"):
+        with st.expander("SQL Query Used"):
             st.code(result["sql"], language="sql")
 
     if result.get("errors"):
@@ -354,15 +352,12 @@ with left_col:
     st.markdown(
         """
         - What is total sales by region?
-        - Which products have the highest total profit?
         - Show the monthly sales trend.
-        - How does average order value vary by customer segment?
-        - Are there unusual low-profit rows in this dataset?
+        - What is the total profit by category?
         """
     )
 
     st.markdown("### Ask a question")
-    st.caption("Best results come from CSVs with fields like sales, profit, region, segment, discount, and order date.")
 
     uploaded_files = st.file_uploader("Upload one or more CSV datasets", type=["csv"], accept_multiple_files=True)
     saved_datasets = _list_saved_datasets()
@@ -423,10 +418,17 @@ if run:
             st.error(f"Unable to read the dataset: {exc}")
             st.stop()
 
+        progress = st.status("Starting analysis workflow...", expanded=True)
+        progress.write("Step 1/5: profiling dataset")
+        dataset_profile = profile_dataframe(df)
+
+        progress.progress(20)
+        progress.write("Step 2/5: classifying the question and choosing the execution path")
+
         state = {
             "question": query,
             "dataframe": df,
-            "dataset_profile": {},
+            "dataset_profile": dataset_profile,
             "intent": "",
             "method": "",
             "analysis": "",
@@ -434,7 +436,16 @@ if run:
             "chart": None,
             "errors": [],
         }
+
+        progress.progress(40)
+        progress.write("Step 3/5: generating the analytics plan")
+
         result = st.session_state.graph.invoke(state)
+
+        progress.progress(80)
+        progress.write("Step 4/5: running the final analysis and rendering output")
+
+        progress.update(label="Analysis complete", state="complete")
 
         with right_col:
             st.markdown("### Analysis Result")
