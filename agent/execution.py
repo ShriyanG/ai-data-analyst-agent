@@ -222,7 +222,10 @@ def _run_pandas_analysis(df: pd.DataFrame, question: str) -> tuple[str, Optional
             )
 
     return (
-        f"Direct Answer: A pandas-based analysis was prepared for '{question}'.\n\nEvidence: Dataset shape is {df.shape[0]} rows and {df.shape[1]} columns.\n\nMethod Note: Used pandas for a non-SQL execution path.\n\nAssumptions/Interpretation: The current scaffold uses pandas for trend and outlier-style questions.",
+        "Direct Answer: This question does not match the current supported pandas-analysis patterns.\n\n"
+        "Evidence: No aggregated result was generated for this question, so there is no trustworthy numeric insight to report yet.\n\n"
+        "Method Note: The fallback pandas path was used, but it only supports trend and outlier-style requests in the current scaffold.\n\n"
+        "Assumptions/Interpretation: Try a supported descriptive, trend, or outlier question using fields like sales, profit, region, category, or order date.",
         None,
     )
 
