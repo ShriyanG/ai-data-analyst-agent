@@ -2,6 +2,10 @@
 
 An agentic AI data analyst for CSV-based business questions. It combines local LLM-assisted routing with grounded Pandas and DuckDB execution to turn natural language prompts into traceable answers, SQL, and visual summaries.
 
+## Demo
+
+[▶️ Watch the AI Data Analyst Agent Demo](https://www.youtube.com/watch?v=MzDM9F6JKdE)
+
 ## Overview
 
 ### What problem does it solve?
