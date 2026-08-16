@@ -31,6 +31,14 @@ def _quote_identifier(name: str) -> str:
     return '"' + escaped + '"'
 
 
+def _duckdb_date_cast(column_name: str) -> str:
+    """Return a DuckDB-safe date expression for common string-formatted date columns."""
+    raw_expr = f"CAST({_quote_identifier(column_name)} AS VARCHAR)"
+    formats = ["%Y-%m-%d", "%m/%d/%Y", "%m-%d-%Y", "%d/%m/%Y", "%d-%m-%Y", "%Y/%m/%d"]
+    parsed = [f"TRY_STRPTIME({raw_expr}, '{fmt}')" for fmt in formats]
+    return f"CAST(COALESCE({', '.join(parsed)}) AS DATE)"
+
+
 def _build_chart_for_result(result: pd.DataFrame, metric_label: str) -> Optional[Any]:
     """Create a chart for common result shapes used in the demo workflow."""
     if result.empty or len(result.columns) < 2:
@@ -172,9 +180,10 @@ def _build_duckdb_sql(df: pd.DataFrame, question: str) -> tuple[str, str]:
         ]
         if date_candidates:
             date_col = date_candidates[0]
+            date_expr = _duckdb_date_cast(date_col)
             return (
                 (
-                    f"SELECT DATE_TRUNC('month', CAST({_quote_identifier(date_col)} AS DATE)) AS month_bucket, "
+                    f"SELECT DATE_TRUNC('month', {date_expr}) AS month_bucket, "
                     f"{aggregation}({_quote_identifier(metric_col)}) AS {label}_{_normalize_name(metric_col)} "
                     f"FROM data GROUP BY 1 ORDER BY 1"
                 ),

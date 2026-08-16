@@ -32,6 +32,34 @@ def test_execute_analysis_runs_duckdb_tool_for_region_sales_query():
     assert "total sales" in result["analysis"].lower()
 
 
+def test_execute_analysis_handles_monthly_trend_dates_in_mdy_format():
+    df = pd.DataFrame(
+        {
+            "Order Date": ["1/3/2023", "1/10/2023", "2/5/2023", "2/20/2023"],
+            "Sales": [100.0, 120.0, 90.0, 160.0],
+            "Profit": [10.0, 15.0, 8.0, 20.0],
+        }
+    )
+
+    state = {
+        "question": "Show the monthly sales trend.",
+        "dataframe": df,
+        "dataset_profile": {"numeric_columns": ["Sales", "Profit"]},
+        "intent": "trend",
+        "method": "duckdb",
+        "analysis": "",
+        "sql": "",
+        "chart": None,
+        "errors": [],
+    }
+
+    result = _execute_analysis(state)
+
+    assert result["sql"].strip()
+    assert "month_bucket" in result["sql"].lower()
+    assert "sales" in result["analysis"].lower()
+
+
 def test_execute_analysis_handles_missing_groupby_columns_gracefully():
     df = pd.DataFrame(
         [
