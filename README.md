@@ -119,6 +119,61 @@ ai-data-analyst-agent/
    streamlit run app.py
    ```
 
+## Docker Repro Setup
+
+Use Docker Compose to run both the Streamlit app and Ollama so anyone can reproduce your environment.
+
+1. Clone the repository and enter it:
+
+   ```bash
+   git clone <your-repo-url>
+   cd ai-data-analyst-agent
+   ```
+
+2. Build and start containers:
+
+   ```bash
+   docker compose up -d --build
+   ```
+
+3. Pull the model used by the app inside the Ollama container:
+
+   ```bash
+   docker exec -it ai-data-analyst-ollama ollama pull qwen2.5-coder:3b
+   ```
+
+4. Open the app:
+
+   - Streamlit UI: http://localhost:8501
+   - Ollama API: http://localhost:11434
+
+5. Verify both services are running:
+
+   ```bash
+   docker compose ps
+   docker logs ai-data-analyst-app --tail=50
+   docker logs ai-data-analyst-ollama --tail=50
+   ```
+
+6. Stop everything when done:
+
+   ```bash
+   docker compose down
+   ```
+
+7. Remove persisted Ollama model data (optional reset):
+
+   ```bash
+   docker compose down -v
+   ```
+
+### Repro Notes
+
+- The app container is built from `Dockerfile` and exposes port `8501`.
+- The Ollama container is defined in `docker-compose.yml` and persists models via the `ollama_data` volume.
+- If you change `OLLAMA_MODEL` in `docker-compose.yml`, pull that same model in step 3.
+- First model pull can take a while depending on network speed.
+
 ## Notes
 
 - The current codebase contains starter scaffolding for core modules.
