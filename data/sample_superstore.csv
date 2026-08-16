@@ -1,9 +1,0 @@
-order_id,order_date,region,category,sub_category,sales,profit,discount,quantity
-CA-2026-0001,2026-01-05,West,Technology,Phones,899.99,210.35,0.10,3
-CA-2026-0002,2026-01-11,East,Furniture,Chairs,349.50,42.10,0.15,2
-CA-2026-0003,2026-01-20,South,Office Supplies,Binders,120.00,18.40,0.05,5
-CA-2026-0004,2026-02-03,Central,Technology,Accessories,79.99,9.80,0.00,4
-CA-2026-0005,2026-02-18,West,Furniture,Tables,560.00,-32.00,0.25,1
-CA-2026-0006,2026-03-02,East,Office Supplies,Paper,45.00,12.20,0.00,10
-CA-2026-0007,2026-03-12,South,Technology,Laptops,1299.00,305.00,0.08,1
-CA-2026-0008,2026-03-26,Central,Furniture,Bookcases,420.00,55.50,0.12,2
