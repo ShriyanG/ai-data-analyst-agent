@@ -36,7 +36,13 @@ def _plan_query(state: AgentState) -> AgentState:
     else:
         fallback_intent, fallback_method = "unsupported", "none"
 
-    state["intent"], state["method"] = classify_query(question, fallback_intent, fallback_method)
+    dataset_columns = state.get("dataset_profile", {}).get("columns") or list(state["dataframe"].columns)
+    state["intent"], state["method"] = classify_query(
+        question,
+        fallback_intent,
+        fallback_method,
+        dataset_columns=dataset_columns,
+    )
     return state
 
 

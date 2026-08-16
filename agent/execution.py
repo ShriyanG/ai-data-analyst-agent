@@ -49,73 +49,144 @@ def _build_chart_for_result(result: pd.DataFrame, metric_label: str) -> Optional
     return make_bar_chart(chart_df.head(10), x_col, y_col)
 
 
+def _normalize_tokens(value: str) -> set[str]:
+    tokens = {
+        token
+        for token in re.findall(r"[a-z0-9]+", value.lower())
+        if token not in {"the", "a", "an", "by", "of", "for", "in", "on", "at", "to", "and", "or", "with", "what", "is", "are", "how", "which"}
+    }
+
+    expanded = set(tokens)
+    for token in list(tokens):
+        if token.endswith("ies") and len(token) > 4:
+            expanded.add(token[:-3] + "y")
+        if token.endswith("s") and len(token) > 3:
+            expanded.add(token[:-1])
+    return expanded
+
+
+def _tokenize_question(question: str) -> set[str]:
+    return _normalize_tokens(question)
+
+
+def _choose_aggregation(question: str) -> tuple[str, str]:
+    lower = question.lower()
+    if any(token in lower for token in ["total", "sum", "overall", "grand total"]):
+        return "SUM", "total"
+    if any(token in lower for token in ["average", "avg", "mean"]):
+        return "AVG", "average"
+    if any(token in lower for token in ["count", "how many", "number of"]):
+        return "COUNT", "count"
+    if any(token in lower for token in ["median"]):
+        return "MEDIAN", "median"
+    if any(token in lower for token in ["maximum", "max", "highest", "largest", "top", "most"]):
+        return "MAX", "maximum"
+    if any(token in lower for token in ["minimum", "min", "lowest", "smallest", "bottom", "least"]):
+        return "MIN", "minimum"
+    return "SUM", "total"
+
+
+def _extract_requested_dimension(question: str) -> Optional[str]:
+    match = re.search(
+        r"\bby\s+([a-z0-9_\- ]+?)(?:\s+(?:for|in|on|of|with|and|sorted|highest|lowest|average|total|count|limit|\?|$))",
+        question.lower(),
+    )
+    if match:
+        return match.group(1).strip()
+    return None
+
+
+def _find_matching_dimension(df: pd.DataFrame, requested_dimension: Optional[str], question_tokens: set[str]) -> Optional[str]:
+    non_numeric_columns = [column for column in df.columns if not pd.api.types.is_numeric_dtype(df[column])]
+
+    if requested_dimension:
+        requested_norm = _normalize_name(requested_dimension)
+        for column in non_numeric_columns:
+            column_norm = _normalize_name(column)
+            if requested_norm == column_norm or requested_norm in column_norm or column_norm in requested_norm:
+                return column
+        return None
+
+    best_column = None
+    best_score = 0
+    for column in non_numeric_columns:
+        column_tokens = _normalize_tokens(column)
+        score = sum(1 for token in question_tokens if token in column_tokens)
+        if score > best_score:
+            best_score = score
+            best_column = column
+    return best_column if best_score > 0 else None
+
+
+def _find_matching_metric(df: pd.DataFrame, question_tokens: set[str]) -> Optional[str]:
+    numeric_columns = [column for column in df.columns if pd.api.types.is_numeric_dtype(df[column])]
+    if not numeric_columns:
+        return None
+
+    best_column = None
+    best_score = 0
+    for column in numeric_columns:
+        column_tokens = _normalize_tokens(column)
+        score = sum(1 for token in question_tokens if token in column_tokens)
+        if score > best_score:
+            best_score = score
+            best_column = column
+    return best_column if best_score > 0 else None
+
+
 def _build_duckdb_sql(df: pd.DataFrame, question: str) -> tuple[str, str]:
     lower_question = question.lower()
-    region_col = _find_column(df, "Region", "region")
-    sales_col = _find_column(df, "Sales", "sales")
-    profit_col = _find_column(df, "Profit", "profit")
-    product_col = _find_column(df, "Product Name", "product_name", "Product", "product")
-    segment_col = _find_column(df, "Segment", "segment")
-    date_col = _find_column(df, "Order Date", "order_date", "OrderDate", "date")
-    discount_col = _find_column(df, "Discount", "discount")
+    question_tokens = _tokenize_question(question)
 
-    if region_col and sales_col and "sales by region" in lower_question:
+    requested_dimension = _extract_requested_dimension(question)
+    dimension_col = _find_matching_dimension(df, requested_dimension, question_tokens)
+    if requested_dimension and dimension_col is None:
         return (
-            (
-                f"SELECT {_quote_identifier(region_col)} AS region, "
-                f"SUM({_quote_identifier(sales_col)}) AS total_sales "
-                f"FROM data GROUP BY 1 ORDER BY 2 DESC"
-            ),
-            "total sales by region",
+            "SELECT 'The requested dimension is not available in this dataset.' AS status, 'No matching column found' AS missing_column;",
+            "missing requested dimension",
         )
 
-    if product_col and profit_col and (
-        "highest total profit" in lower_question or "profit" in lower_question and "product" in lower_question
-    ):
+    metric_col = _find_matching_metric(df, question_tokens)
+    if metric_col is None:
         return (
-            (
-                f"SELECT {_quote_identifier(product_col)} AS product, "
-                f"SUM({_quote_identifier(profit_col)}) AS total_profit "
-                f"FROM data GROUP BY 1 ORDER BY 2 DESC LIMIT 5"
-            ),
-            "top products by total profit",
+            "SELECT 'No numeric measure was found for this question.' AS status, 'No matching column found' AS missing_column;",
+            "missing numeric metric",
         )
 
-    if segment_col and sales_col and (
-        "average order value" in lower_question or "average" in lower_question and "segment" in lower_question
-    ):
+    aggregation, label = _choose_aggregation(question)
+    if "by" in lower_question and dimension_col is not None:
+        aggregate_sql = f"{aggregation}({_quote_identifier(metric_col)}) AS {label}_{_normalize_name(metric_col)}"
         return (
             (
-                f"SELECT {_quote_identifier(segment_col)} AS customer_segment, "
-                f"AVG({_quote_identifier(sales_col)}) AS average_order_value "
-                f"FROM data GROUP BY 1 ORDER BY 2 DESC"
+                f"SELECT {_quote_identifier(dimension_col)} AS dimension, "
+                f"{aggregate_sql} FROM data GROUP BY 1 ORDER BY 2 DESC"
             ),
-            "average order value by customer segment",
+            f"{label} of {metric_col} by {dimension_col}",
         )
 
-    if date_col and sales_col and ("month" in lower_question or "decline" in lower_question or "drop" in lower_question):
-        return (
-            (
-                f"SELECT DATE_TRUNC('month', CAST({_quote_identifier(date_col)} AS DATE)) AS month, "
-                f"SUM({_quote_identifier(sales_col)}) AS total_sales "
-                f"FROM data GROUP BY 1 ORDER BY 1"
-            ),
-            "monthly sales trend",
-        )
-
-    if discount_col and profit_col and "discount" in lower_question:
-        return (
-            (
-                f"SELECT CASE WHEN {_quote_identifier(discount_col)} > 0.2 THEN 'Above 20%' ELSE '20% or below' END AS discount_group, "
-                f"AVG({_quote_identifier(profit_col)}) AS average_profit "
-                f"FROM data GROUP BY 1"
-            ),
-            "average profit by discount group",
-        )
+    if "trend" in lower_question or "month" in lower_question or "quarter" in lower_question or "date" in lower_question:
+        date_candidates = [
+            column
+            for column in df.columns
+            if "date" in _normalize_name(column) or "month" in _normalize_name(column) or "year" in _normalize_name(column)
+        ]
+        if date_candidates:
+            date_col = date_candidates[0]
+            return (
+                (
+                    f"SELECT DATE_TRUNC('month', CAST({_quote_identifier(date_col)} AS DATE)) AS month_bucket, "
+                    f"{aggregation}({_quote_identifier(metric_col)}) AS {label}_{_normalize_name(metric_col)} "
+                    f"FROM data GROUP BY 1 ORDER BY 1"
+                ),
+                f"{label} trend over time",
+            )
 
     return (
-        "SELECT * FROM data LIMIT 5;",
-        "a sample of the dataset",
+        (
+            f"SELECT {aggregation}({_quote_identifier(metric_col)}) AS {label}_{_normalize_name(metric_col)} "
+            f"FROM data"
+        ),
+        f"{label} of {metric_col}",
     )
 
 

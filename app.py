@@ -125,16 +125,24 @@ def _parse_analysis_sections(analysis: str) -> dict[str, str]:
 
 def _render_dataset_summary(df: pd.DataFrame) -> None:
     profile = profile_dataframe(df)
+    all_columns = [
+        str(column).strip()
+        for column in profile.get("columns", df.columns.tolist())
+        if str(column).strip()
+    ]
+    numeric_fields = [
+        str(column).strip()
+        for column in profile.get("numeric_columns", [])
+        if str(column).strip()
+    ]
+
     metric_cols = st.columns(4)
     metric_cols[0].metric("Rows", f"{df.shape[0]:,}")
     metric_cols[1].metric("Columns", f"{df.shape[1]:,}")
-    metric_cols[2].metric("Numeric Fields", len(profile.get("numeric_columns", [])))
+    metric_cols[2].metric("Numeric Fields", len(numeric_fields))
     metric_cols[3].metric("Categorical Fields", len(profile.get("categorical_columns", [])))
 
-    st.caption(
-        "Detected numeric columns: "
-        + (", ".join(profile.get("numeric_columns", [])[:8]) or "None")
-    )
+    st.caption("Columns: " + (", ".join(all_columns[:8]) if all_columns else "None"))
 
 
 def _render_analysis(result: dict) -> None:
